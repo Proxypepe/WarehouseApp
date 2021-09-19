@@ -11,7 +11,6 @@ import com.warehouse.domain.RequestViewModel
 import com.warehouse.domain.RequestViewModelFactory
 import com.warehouse.repository.RequestsApplication
 import androidx.activity.viewModels
-import com.warehouse.repository.database.entity.Request
 
 
 import java.util.*
@@ -28,34 +27,34 @@ class NewRequestActivity : AppCompatActivity() {
 
         val datePicker = findViewById<DatePicker>(R.id.date_Picker)
         val today = Calendar.getInstance()
-
+        var date: Date? = null
         datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH),
             today.get(Calendar.DAY_OF_MONTH)
-        ){  view, year, month, day ->
-            val month = month + 1
-            val msg = "You Selected: $day/$month/$year"
-            Toast.makeText(this@NewRequestActivity, msg, Toast.LENGTH_SHORT).show()
+        ){  _ , year, month, day ->
+            date = Date(year, month, day)
         }
 
-
-
-        val productName: EditText? = findViewById(R.id.productNamePT)
-        val amount: EditText? = findViewById(R.id.amountPT)
-        val warehousePlace: EditText? = findViewById(R.id.warehousePlacePT)
-        val status: EditText? = findViewById(R.id.statusPT)
+        val productName: EditText = findViewById(R.id.productNamePT)
+        val amount: EditText = findViewById(R.id.amountPT)
+        val warehousePlace: EditText = findViewById(R.id.warehousePlacePT)
+        val status: EditText = findViewById(R.id.statusPT)
 
         val button: Button = findViewById(R.id.add_button)
         button.setOnClickListener {
-            val req = Request(
-                productName=productName?.text.toString(), amount=amount?.text.toString().toInt(),
-                warehousePlace=warehousePlace?.text.toString().toInt(), status=status?.text.toString(),
-                arrivalDate=null)
-            val msg = productName?.text.toString() + amount?.text.toString() + warehousePlace?.text.toString() + status?.text.toString()
-            requestViewModel.insert(req)
+            if (productName.text.isNotEmpty() && amount.text.isNotEmpty() &&
+                warehousePlace.text.isNotEmpty() && status.text.isNotEmpty())
+            {
+                requestViewModel.setRequest(
+                    productName=productName.text.toString(), amount=Integer.parseInt(amount.text.toString()),
+                    warehousePlace=Integer.parseInt(warehousePlace.text.toString()), status=status.text.toString(),
+                    arrivalDate=date)
 
-            Toast.makeText(this@NewRequestActivity, msg, Toast.LENGTH_SHORT).show()
-
+                requestViewModel.writeRequest()
+                finish()
+            } else  {
+                Toast.makeText(this@NewRequestActivity,
+                          "Fill in all the fields",  Toast.LENGTH_LONG).show()
+            }
         }
-
     }
 }

@@ -4,10 +4,25 @@ import androidx.lifecycle.*
 import com.warehouse.repository.RequestRepository
 import com.warehouse.repository.database.entity.Request
 import kotlinx.coroutines.launch
+import java.util.*
 
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     val allRequest: LiveData<List<Request>> = repository.allRequests.asLiveData()
+
+    private var productName: String?    = null
+    private var amount: Int?            = null
+    private var warehousePlace: Int?    = null
+    private var status: String?         = null
+    private var arrivalDate: Date?      = null
+    private var request: Request?       = null
+
+
+    private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
+                            status: String, arrivalDate: Date?){
+        request = Request(productName=productName, amount=amount, warehousePlace=warehousePlace,
+            status=status, arrivalDate=arrivalDate)
+    }
 
     fun insert(request: Request) = viewModelScope.launch {
         repository.insert(request)
@@ -15,6 +30,20 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     fun deleteAll() = viewModelScope.launch {
         repository.deleteAll()
+    }
+
+    fun setRequest(productName: String, amount: Int, warehousePlace: Int,
+                    status: String, arrivalDate: Date?) {
+        this.productName        = productName
+        this.amount             = amount
+        this.warehousePlace     = warehousePlace
+        this.status             = status
+        this.arrivalDate        = arrivalDate
+        initRequest(productName, amount, warehousePlace, status, arrivalDate)
+    }
+
+    fun writeRequest(){
+        this.request?.let { insert(it) }
     }
 }
 

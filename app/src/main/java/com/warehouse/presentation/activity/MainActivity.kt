@@ -1,4 +1,4 @@
-package com.warehouse.pressentation.activity
+package com.warehouse.presentation.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.warehouse.R
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.domain.RequestViewModelFactory
-import com.warehouse.pressentation.adapter.RequestListAdapter
+import com.warehouse.presentation.adapter.RequestListAdapter
 import com.warehouse.repository.RequestsApplication
 
 

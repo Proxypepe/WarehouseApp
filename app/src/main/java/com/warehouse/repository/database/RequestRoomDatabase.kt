@@ -5,13 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.warehouse.repository.database.dao.RequestDao
 import com.warehouse.repository.database.entity.Request
 import com.warehouse.utils.DateConverter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @Database(entities = [Request::class], version = 1)

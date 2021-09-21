@@ -1,8 +1,5 @@
 package com.warehouse.repository.database.dao
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.warehouse.repository.database.entity.Request
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +18,6 @@ interface RequestDao {
     @Query("DELETE FROM request")
     suspend fun deleteAll()
 
+    @Delete
+    suspend fun delete(request: Request)
 }

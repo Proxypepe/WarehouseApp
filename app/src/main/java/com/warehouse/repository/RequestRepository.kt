@@ -24,4 +24,8 @@ class RequestRepository (private val requestDao: RequestDao){
         requestDao.update(request)
     }
 
+    @WorkerThread
+    suspend fun delete(request: Request) {
+        requestDao.delete(request)
+    }
 }

@@ -1,4 +1,4 @@
-package com.warehouse.presentation.compose
+package com.warehouse.presentation.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

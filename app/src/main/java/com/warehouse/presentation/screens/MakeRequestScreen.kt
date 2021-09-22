@@ -33,7 +33,7 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
     Column (
         modifier = Modifier
             .padding(10.dp)
-            .fillMaxSize(),
+            .fillMaxHeight(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){

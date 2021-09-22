@@ -4,17 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 
 import androidx.compose.material.*
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.domain.RequestViewModelFactory
+import com.warehouse.presentation.screens.DetailScreen
 import com.warehouse.presentation.screens.MakeRequestScreen
 import com.warehouse.presentation.screens.StartCardViewList
 import com.warehouse.repository.RequestsApplication
+import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.model.Request
 
 
 class MainActivity : ComponentActivity() {
@@ -38,10 +44,16 @@ class MainActivity : ComponentActivity() {
                             }// Foreach
                         } //BottomNavigation
                     } // bottomBar
-                ) {
+                ) {  innerPadding ->
                     NavHost(navController = navController, startDestination = "Requests") {
-                        composable("Requests") { StartCardViewList(requestViewModel)}
+                        composable("Requests") { Box(modifier = Modifier.padding(innerPadding))
+                                                { StartCardViewList(navController, requestViewModel)}}
                         composable("Make request") { MakeRequestScreen(navController, requestViewModel)}
+                        composable("details") {
+                            navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")?.let {
+                                DetailScreen(request = it)
+                            }
+                        }
                     }
                 }
             }

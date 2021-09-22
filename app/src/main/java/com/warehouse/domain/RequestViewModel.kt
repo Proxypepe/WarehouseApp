@@ -2,29 +2,29 @@ package com.warehouse.domain
 
 import androidx.lifecycle.*
 import com.warehouse.repository.RequestRepository
-import com.warehouse.repository.database.entity.Request
+import com.warehouse.repository.database.entity.RequestDTO
 import kotlinx.coroutines.launch
 import java.util.*
 
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
-    val allRequest: LiveData<List<Request>> = repository.allRequests.asLiveData()
+    val allRequest: LiveData<List<RequestDTO>> = repository.allRequests.asLiveData()
 
     private var productName: String?    = null
     private var amount: Int?            = null
     private var warehousePlace: Int?    = null
     private var status: String?         = null
     private var arrivalDate: Date?      = null
-    private var request: Request?       = null
+    private var request: RequestDTO?       = null
 
 
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
                             status: String, arrivalDate: Date?){
-        request = Request(productName=productName, amount=amount, warehousePlace=warehousePlace,
+        request = RequestDTO(productName=productName, amount=amount, warehousePlace=warehousePlace,
             status=status, arrivalDate=arrivalDate)
     }
 
-    fun insert(request: Request) = viewModelScope.launch {
+    fun insert(request: RequestDTO) = viewModelScope.launch {
         repository.insert(request)
     }
 

@@ -1,5 +1,7 @@
 package com.warehouse.presentation.screens
 
+import android.os.Bundle
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,19 +13,38 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
+
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.theme.ComposeTestTheme
-import com.warehouse.repository.database.entity.Request
+import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.model.toRequest
+
 
 @Composable
-fun StartCardViewList(requestViewModel: RequestViewModel) {
-    val list: List<Request> by requestViewModel.allRequest.observeAsState(initial = emptyList())
-    CardViewList(list)
+fun StartCardViewList(navController: NavController, requestViewModel: RequestViewModel) {
+    val list: List<RequestDTO> by requestViewModel.allRequest.observeAsState(initial = emptyList())
+    CardViewList(list, navController)
 }
 
 @Composable
-fun CardView(request: Request) {
-    Card {
+fun CardViewList(requests: List<RequestDTO>, navController: NavController? = null) {
+    LazyColumn {
+        items(requests) { request ->
+            CardView(request, navController)
+        }
+    }
+}
+
+@Composable
+fun CardView(request: RequestDTO, navController: NavController? = null) {
+    Card(
+        modifier = Modifier.clickable {
+            navController?.navigate("details", bundleOf("REQUEST" to toRequest(request)))
+        }
+    ){
         Column(
             Modifier.fillMaxWidth()
                 .padding(10.dp)
@@ -62,33 +83,29 @@ fun CardView(request: Request) {
     }
 }
 
-@Composable
-fun CardViewList(requests: List<Request>) {
-    LazyColumn {
-        items(requests) { request ->
-            CardView(request)
-        }
-    }
+fun NavController?.navigate(route: String, params: Bundle?, builder: NavOptionsBuilder.() -> Unit = {}) {
+    this?.currentBackStackEntry?.arguments?.putAll(params)
+
+    this?.navigate(route, builder)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun CardViewPreview() {
     ComposeTestTheme {
-        CardView(Request(0, "Hello", 10, 2,"Android", null))
+        CardView(RequestDTO(0, "Hello", 10, 2,"Android", null))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun CardViewListPreview() {
-    val l :List<Request> = arrayListOf(
-        Request(0, "Hello1", 10, 2,"Android", null),
-        Request(1, "Hello2", 131, 1,"Arraved", null),
-        Request(2, "Hello3", 1210, 3,"sa", null)
+    val l :List<RequestDTO> = arrayListOf(
+        RequestDTO(0, "Hello1", 10, 2,"Android", null),
+        RequestDTO(1, "Hello2", 131, 1,"Arraved", null),
+        RequestDTO(2, "Hello3", 1210, 3,"sa", null)
     )
     ComposeTestTheme {
         CardViewList(l)
     }
 }
-

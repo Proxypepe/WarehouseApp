@@ -6,11 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.warehouse.repository.database.dao.RequestDao
-import com.warehouse.repository.database.entity.Request
+import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.utils.DateConverter
 
 
-@Database(entities = [Request::class], version = 1)
+@Database(entities = [RequestDTO::class], version = 1)
 @TypeConverters(DateConverter::class)
 abstract class  RequestRoomDatabase : RoomDatabase() {
     abstract fun requestDao(): RequestDao

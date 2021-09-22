@@ -1,23 +1,23 @@
 package com.warehouse.repository.database.dao
 import androidx.room.*
-import com.warehouse.repository.database.entity.Request
+import com.warehouse.repository.database.entity.RequestDTO
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RequestDao {
 
     @Query("SELECT * FROM request")
-    fun getRequests(): Flow<List<Request>>
+    fun getRequests(): Flow<List<RequestDTO>>
 
     @Insert
-    suspend fun insert(request: Request)
+    suspend fun insert(request: RequestDTO)
 
     @Update
-    suspend fun update(request: Request)
+    suspend fun update(request: RequestDTO)
     
     @Query("DELETE FROM request")
     suspend fun deleteAll()
 
     @Delete
-    suspend fun delete(request: Request)
+    suspend fun delete(request: RequestDTO)
 }

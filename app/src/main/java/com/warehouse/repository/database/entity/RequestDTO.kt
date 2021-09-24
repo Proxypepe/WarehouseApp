@@ -30,3 +30,4 @@ data class RequestDTO(
     @ColumnInfo(name = "arrival_date")
     val arrivalDate: Date?
 )
+// https://developer.android.com/training/data-storage/room/relationships

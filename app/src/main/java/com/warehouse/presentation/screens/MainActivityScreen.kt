@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +32,8 @@ fun StartCardViewList(navController: NavController, requestViewModel: RequestVie
 
 @Composable
 fun CardViewList(requests: List<RequestDTO>, navController: NavController? = null) {
-    LazyColumn {
+    val scrollState = rememberLazyListState()
+    LazyColumn(state = scrollState) {
         items(requests) { request ->
             CardView(request, navController)
         }
@@ -40,7 +42,8 @@ fun CardViewList(requests: List<RequestDTO>, navController: NavController? = nul
 
 @Composable
 fun CardView(request: RequestDTO, navController: NavController? = null) {
-    Card(
+    Card (
+        elevation = 8.dp,
         modifier = Modifier.clickable {
             navController?.navigate("details", bundleOf("REQUEST" to toRequest(request)))
         }

@@ -1,5 +1,6 @@
 package com.warehouse.presentation.screens
 
+
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +31,7 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
     val arrivalDate = remember { mutableStateOf(TextFieldValue()) }
     val context = LocalContext.current
 
+    
     Column (
         modifier = Modifier
             .padding(10.dp)
@@ -60,7 +62,6 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
             shape = RoundedCornerShape(8.dp))
 
         Spacer(modifier = Modifier.padding(10.dp))
-
         Button(onClick = {
             if (productName.value.text.isNotEmpty() && amount.value.text.isNotEmpty() &&
                 warehousePlace.value.text.isNotEmpty() &&  status.value.text.isNotEmpty()) {

@@ -5,17 +5,18 @@ import com.warehouse.repository.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlinx.coroutines.flow.Flow
 
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
-    val allRequest: LiveData<List<RequestDTO>> = repository.allRequests.asLiveData()
+    val allRequests: LiveData<List<RequestDTO>> = repository.allRequests.asLiveData()
 
     private var productName: String?    = null
     private var amount: Int?            = null
     private var warehousePlace: Int?    = null
     private var status: String?         = null
     private var arrivalDate: Date?      = null
-    private var request: RequestDTO?       = null
+    private var request: RequestDTO?    = null
 
 
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
@@ -24,7 +25,7 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
             status=status, arrivalDate=arrivalDate)
     }
 
-    fun insert(request: RequestDTO) = viewModelScope.launch {
+    private fun insert(request: RequestDTO) = viewModelScope.launch {
         repository.insert(request)
     }
 
@@ -44,6 +45,10 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     fun writeRequest(){
         this.request?.let { insert(it) }
+    }
+
+    fun getRequestById(id: Int): Flow<RequestDTO> {
+        return repository.getRequestById(id)
     }
 }
 

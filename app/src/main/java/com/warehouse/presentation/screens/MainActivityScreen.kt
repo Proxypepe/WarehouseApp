@@ -25,7 +25,7 @@ import com.warehouse.repository.model.toRequest
 
 @Composable
 fun StartCardViewList(navController: NavController, requestViewModel: RequestViewModel) {
-    val list: List<RequestDTO> by requestViewModel.allRequest.observeAsState(initial = emptyList())
+    val list: List<RequestDTO> by requestViewModel.allRequests.observeAsState(initial = emptyList())
     CardViewList(list, navController)
 }
 

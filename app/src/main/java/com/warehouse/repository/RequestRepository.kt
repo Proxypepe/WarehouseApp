@@ -9,6 +9,10 @@ class RequestRepository (private val requestDao: RequestDao){
 
     val allRequests: Flow<List<RequestDTO>> = requestDao.getRequests()
 
+    fun getRequestById(id: Int): Flow<RequestDTO>{
+        return requestDao.getRequestById(id)
+    }
+
     @WorkerThread
     suspend fun insert(request: RequestDTO) {
         requestDao.insert(request)

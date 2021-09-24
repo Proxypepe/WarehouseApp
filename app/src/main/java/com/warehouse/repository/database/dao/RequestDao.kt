@@ -9,6 +9,9 @@ interface RequestDao {
     @Query("SELECT * FROM request")
     fun getRequests(): Flow<List<RequestDTO>>
 
+    @Query("SELECT * FROM request WHERE id = :id")
+    fun getRequestById(id: Int): Flow<RequestDTO>
+
     @Insert
     suspend fun insert(request: RequestDTO)
 

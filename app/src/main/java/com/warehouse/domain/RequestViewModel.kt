@@ -1,8 +1,10 @@
 package com.warehouse.domain
 
+
 import androidx.lifecycle.*
 import com.warehouse.repository.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.model.Contact
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
@@ -16,13 +18,14 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     private var warehousePlace: Int?    = null
     private var status: String?         = null
     private var arrivalDate: Date?      = null
+    private var contact: Contact?       = null
     private var request: RequestDTO?    = null
 
 
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
-                            status: String, arrivalDate: Date?){
+                            status: String, arrivalDate: Date?, contact: Contact?){
         request = RequestDTO(productName=productName, amount=amount, warehousePlace=warehousePlace,
-            status=status, arrivalDate=arrivalDate)
+            status=status, arrivalDate=arrivalDate, contact=contact)
     }
 
     private fun insert(request: RequestDTO) = viewModelScope.launch {
@@ -34,13 +37,14 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
     fun setRequest(productName: String, amount: Int, warehousePlace: Int,
-                    status: String, arrivalDate: Date?) {
+                    status: String, arrivalDate: Date?, contact: Contact?) {
         this.productName        = productName
         this.amount             = amount
         this.warehousePlace     = warehousePlace
         this.status             = status
         this.arrivalDate        = arrivalDate
-        initRequest(productName, amount, warehousePlace, status, arrivalDate)
+        this.contact            = contact
+        initRequest(productName, amount, warehousePlace, status, arrivalDate, contact)
     }
 
     fun writeRequest(){

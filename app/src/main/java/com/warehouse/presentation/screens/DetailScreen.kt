@@ -43,7 +43,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
         } else {
             val requestFromBD = requestViewModel.getRequestById(id)
             val liveData = requestFromBD.asLiveData()
-            val requestDTO: RequestDTO by liveData.observeAsState(RequestDTO(0, "", 0, 0,"", null))
+            val requestDTO: RequestDTO by liveData.observeAsState(RequestDTO(0, "", 0, 0,"", null, null))
             val request: Request = toRequest(requestDTO)
             DetailScreen(request = request)
         }
@@ -90,7 +90,7 @@ fun ErrorScreen() {
 @Preview(showBackground = true)
 @Composable
 fun DetailScreenPreview () {
-    DetailScreen(Request(0, "Hello", 10, 2, "Android", null))
+    DetailScreen(Request(0, "Hello", 10, 2, "Android", null, null))
 }
 
 @Preview(showBackground = true)

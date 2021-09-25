@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.theme.ComposeTestTheme
+import com.warehouse.repository.model.Contact
 import java.util.*
 
 
@@ -71,6 +72,7 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
                     Integer.parseInt(amount.value.text),
                     Integer.parseInt(warehousePlace.value.text),
                     status.value.text,
+                    null,
                     null
                 )
                 navController.navigate("Requests")
@@ -93,7 +95,7 @@ fun MakeRequestScreenPreview() {
 }
 
 fun makeRequest(requestViewModel: RequestViewModel, productName: String, amount: Int, warehousePlace:Int,
-                status: String, date: Date?) {
-    requestViewModel.setRequest(productName, amount, warehousePlace, status, date)
+                status: String, date: Date?, contact: Contact?) {
+    requestViewModel.setRequest(productName, amount, warehousePlace, status, date, contact)
     requestViewModel.writeRequest()
 }

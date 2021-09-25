@@ -13,14 +13,15 @@ data class Request(val id: Int = 0,
                     val amount: Int,
                     val warehousePlace: Int,
                     val status: String,
-                    val arrivalDate: Date?) : Parcelable
+                    val arrivalDate: Date?,
+                    val contact: Contact?) : Parcelable
 
 fun toRequest(requestDto: RequestDTO): Request {
     return Request(requestDto.id, requestDto.productName, requestDto.amount, requestDto.warehousePlace,
-        requestDto.status, requestDto.arrivalDate)
+        requestDto.status, requestDto.arrivalDate, requestDto.contact)
 }
 
 fun toRequestDTO(request: Request): RequestDTO {
     return RequestDTO(request.id, request.productName, request.amount, request.warehousePlace,
-        request.status, request.arrivalDate)
+        request.status, request.arrivalDate, request.contact)
 }

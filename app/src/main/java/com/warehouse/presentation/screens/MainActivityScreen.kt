@@ -96,7 +96,7 @@ fun NavController?.navigate(route: String, params: Bundle?, builder: NavOptionsB
 @Composable
 fun CardViewPreview() {
     ComposeTestTheme {
-        CardView(RequestDTO(0, "Hello", 10, 2,"Android", null))
+        CardView(RequestDTO(0, "Hello", 10, 2,"Android", null, null))
     }
 }
 
@@ -104,9 +104,9 @@ fun CardViewPreview() {
 @Composable
 fun CardViewListPreview() {
     val l :List<RequestDTO> = arrayListOf(
-        RequestDTO(0, "Hello1", 10, 2,"Android", null),
-        RequestDTO(1, "Hello2", 131, 1,"Arraved", null),
-        RequestDTO(2, "Hello3", 1210, 3,"sa", null)
+        RequestDTO(0, "Hello1", 10, 2,"Android", null, null),
+        RequestDTO(1, "Hello2", 131, 1,"Arraved", null, null),
+        RequestDTO(2, "Hello3", 1210, 3,"sa", null, null)
     )
     ComposeTestTheme {
         CardViewList(l)

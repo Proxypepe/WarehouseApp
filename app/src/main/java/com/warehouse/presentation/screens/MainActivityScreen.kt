@@ -78,9 +78,14 @@ fun CardView(request: RequestDTO, navController: NavController? = null) {
                 Text(text = request.status)
             }
             Row {
-                Text(text = "Arrival date", modifier = Modifier.width(250.dp))
+                Text(text = "Supplier name", modifier = Modifier.width(250.dp))
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = request.arrivalDate.toString())
+                Text(text = request.contact?.name ?: "null")
+            }
+            Row {
+                Text(text = "Supplier phone number", modifier = Modifier.width(250.dp))
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = request.contact?.phoneNumber ?: "null")
             }
         }
     }

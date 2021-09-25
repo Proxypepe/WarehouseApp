@@ -16,13 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.warehouse.domain.ContactViewModel
 
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.domain.RequestViewModelFactory
-import com.warehouse.presentation.screens.DetailFromDeep
-import com.warehouse.presentation.screens.DetailScreen
-import com.warehouse.presentation.screens.MakeRequestScreen
-import com.warehouse.presentation.screens.StartCardViewList
+import com.warehouse.presentation.screens.*
 import com.warehouse.repository.RequestsApplication
 import com.warehouse.repository.model.Request
 
@@ -32,6 +30,8 @@ class MainActivity : ComponentActivity() {
     private val requestViewModel: RequestViewModel by viewModels {
         RequestViewModelFactory((application as RequestsApplication).repository)
     }
+
+    private var contactViewModel = ContactViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,12 +57,20 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "Requests") {
                         composable("Requests") { Box(modifier = Modifier.padding(innerPadding))
                                                 { StartCardViewList(navController, requestViewModel)}}
-                        composable("Make request") { MakeRequestScreen(navController, requestViewModel)}
+
+                        composable("Make request") { MakeRequestScreen(navController, requestViewModel, contactViewModel)}
+
                         composable("details") {
                             navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")?.let {
                                 DetailScreen(request = it)
                             }
                         }// route detail
+
+                        composable("contacts") {
+                            ContactScreen(navController = navController,
+                                context as MainActivity,  requestViewModel = requestViewModel,
+                                contactViewModel = contactViewModel)
+                        }
 
                         composable("detail?id={id}",
                             deepLinks = listOf(navDeepLink { uriPattern = "$uriPat/detail?id={id}" })

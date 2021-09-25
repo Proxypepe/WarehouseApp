@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.warehouse.domain.ContactViewModel
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.theme.ComposeTestTheme
 import com.warehouse.repository.model.Contact
@@ -24,12 +25,17 @@ import java.util.*
 
 
 @Composable
-fun MakeRequestScreen(navController: NavController, requestViewModel: RequestViewModel) {
-    val productName = remember { mutableStateOf(TextFieldValue()) }
-    val amount = remember { mutableStateOf(TextFieldValue()) }
-    val warehousePlace = remember { mutableStateOf(TextFieldValue()) }
-    val status = remember { mutableStateOf(TextFieldValue()) }
-    val arrivalDate = remember { mutableStateOf(TextFieldValue()) }
+fun MakeRequestScreen(navController: NavController, requestViewModel: RequestViewModel, contactViewModel: ContactViewModel) {
+    val state = requestViewModel.getState()
+    val pN = state?.productName ?: ""
+    val a: String = state?.amount ?: ""
+    val w = state?.warehousePlace ?: ""
+    val s = state?.status ?: ""
+
+    val productName = remember { mutableStateOf(TextFieldValue(pN)) }
+    val amount = remember { mutableStateOf(TextFieldValue(a)) }
+    val warehousePlace = remember { mutableStateOf(TextFieldValue(w)) }
+    val status = remember { mutableStateOf(TextFieldValue(s)) }
     val context = LocalContext.current
 
     
@@ -63,6 +69,17 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
             shape = RoundedCornerShape(8.dp))
 
         Spacer(modifier = Modifier.padding(10.dp))
+
+        Button( onClick = {
+            requestViewModel.saveState(productName.value.text, amount.value.text,
+                                        warehousePlace.value.text, status.value.text)
+            navController.navigate("contacts")
+        }){
+            Text("Add Contact")
+        }
+
+        Spacer(modifier = Modifier.padding(10.dp))
+
         Button(onClick = {
             if (productName.value.text.isNotEmpty() && amount.value.text.isNotEmpty() &&
                 warehousePlace.value.text.isNotEmpty() &&  status.value.text.isNotEmpty()) {
@@ -72,7 +89,6 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
                     Integer.parseInt(amount.value.text),
                     Integer.parseInt(warehousePlace.value.text),
                     status.value.text,
-                    null,
                     null
                 )
                 navController.navigate("Requests")
@@ -95,7 +111,9 @@ fun MakeRequestScreenPreview() {
 }
 
 fun makeRequest(requestViewModel: RequestViewModel, productName: String, amount: Int, warehousePlace:Int,
-                status: String, date: Date?, contact: Contact?) {
-    requestViewModel.setRequest(productName, amount, warehousePlace, status, date, contact)
+                status: String, date: Date?) {
+    requestViewModel.setRequest(productName, amount, warehousePlace, status, date)
     requestViewModel.writeRequest()
+    requestViewModel.clear()
 }
+

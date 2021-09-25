@@ -9,6 +9,8 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
 
+data class State(val productName: String, val amount: String, val warehousePlace: String, val status: String)
+
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     val allRequests: LiveData<List<RequestDTO>> = repository.allRequests.asLiveData()
@@ -19,6 +21,7 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     private var status: String?         = null
     private var arrivalDate: Date?      = null
     private var contact: Contact?       = null
+    private var currentState: State?    = null
     private var request: RequestDTO?    = null
 
 
@@ -37,22 +40,42 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
     fun setRequest(productName: String, amount: Int, warehousePlace: Int,
-                    status: String, arrivalDate: Date?, contact: Contact?) {
+                    status: String, arrivalDate: Date?) {
         this.productName        = productName
         this.amount             = amount
         this.warehousePlace     = warehousePlace
         this.status             = status
         this.arrivalDate        = arrivalDate
-        this.contact            = contact
         initRequest(productName, amount, warehousePlace, status, arrivalDate, contact)
     }
 
     fun writeRequest(){
         this.request?.let { insert(it) }
+        contact = null
+    }
+
+    fun setContact(contact: Contact) {
+        this.contact = contact
+    }
+
+    fun saveState(productName: String, amount: String, warehousePlace: String, status: String){
+        currentState = State(productName, amount, warehousePlace, status)
     }
 
     fun getRequestById(id: Int): Flow<RequestDTO> {
         return repository.getRequestById(id)
+    }
+
+    fun getState(): State? {
+        return currentState
+    }
+
+    fun getRequest(): RequestDTO? {
+        return request
+    }
+
+    fun clear() {
+        currentState = null
     }
 }
 

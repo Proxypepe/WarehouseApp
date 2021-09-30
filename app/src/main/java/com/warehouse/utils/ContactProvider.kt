@@ -37,7 +37,7 @@ class ContactProvider(private val context: Context, private val activity: Activi
         val cur: Cursor? = cr.query(
             ContactsContract.Contacts.CONTENT_URI,
             null, null, null, null
-        )
+        )// cursor loader
         if ((cur?.getCount() ?: 0) > 0) {
             while (cur != null && cur.moveToNext()) {
                 val id: String = cur.getString(

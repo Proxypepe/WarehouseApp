@@ -25,7 +25,7 @@ import java.util.*
 
 
 @Composable
-fun MakeRequestScreen(navController: NavController, requestViewModel: RequestViewModel, contactViewModel: ContactViewModel) {
+fun MakeRequestScreen(navController: NavController, requestViewModel: RequestViewModel) {
     val state = requestViewModel.getState()
     val pN = state?.productName ?: ""
     val a: String = state?.amount ?: ""

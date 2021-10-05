@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.warehouse.domain.ContactViewModel
+import com.warehouse.domain.ExchangeViewModel
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.theme.ComposeTestTheme
 import com.warehouse.repository.model.Contact
@@ -25,7 +26,7 @@ import java.util.*
 
 
 @Composable
-fun MakeRequestScreen(navController: NavController, requestViewModel: RequestViewModel) {
+fun MakeRequestScreen(navController: NavController, requestViewModel: RequestViewModel, exchangeViewModel: ExchangeViewModel) {
     val state = requestViewModel.getState()
     val pN = state?.productName ?: ""
     val a: String = state?.amount ?: ""
@@ -70,14 +71,23 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
 
         Spacer(modifier = Modifier.padding(10.dp))
 
-        Button( onClick = {
-            requestViewModel.saveState(productName.value.text, amount.value.text,
-                                        warehousePlace.value.text, status.value.text)
-            navController.navigate("contacts")
-        }){
-            Text("Add Contact")
+        Row {
+            Button(onClick = {
+                requestViewModel.saveState(
+                    productName.value.text, amount.value.text,
+                    warehousePlace.value.text, status.value.text
+                )
+                navController.navigate("contacts")
+            }) {
+                Text("Add Contact")
+            }
+            Spacer(modifier = Modifier.padding(15.dp))
+            Button(onClick = {
+                exchangeViewModel.fetchExchange("10", "USD", "RUB")
+            }) {
+                Text("Add Price")
+            }
         }
-
         Spacer(modifier = Modifier.padding(10.dp))
 
         Button(onClick = {

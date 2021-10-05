@@ -21,6 +21,7 @@ import androidx.navigation.NavOptionsBuilder
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.theme.ComposeTestTheme
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.model.Price
 import com.warehouse.repository.model.toRequest
 
 
@@ -80,12 +81,19 @@ fun CardView(request: RequestDTO, navController: NavController? = null) {
             Row {
                 Text(text = "Supplier name", modifier = Modifier.width(250.dp))
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = request.contact?.name ?: "null")
+                Text(text = request.contact?.name ?: "Unknown")
             }
             Row {
                 Text(text = "Supplier phone number", modifier = Modifier.width(250.dp))
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = request.contact?.phoneNumber ?: "null")
+                Text(text = request.contact?.phoneNumber ?: "Unknown")
+            }
+            Row {
+                Text(text = "Price", modifier = Modifier.width(250.dp))
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = request.price?.price?.toString() ?: "Unknown" )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = request.price?.currency ?: "")
             }
         }
     }
@@ -101,7 +109,7 @@ fun NavController?.navigate(route: String, params: Bundle?, builder: NavOptionsB
 @Composable
 fun CardViewPreview() {
     ComposeTestTheme {
-        CardView(RequestDTO(0, "Hello", 10, 2,"Android", null, null))
+        CardView(RequestDTO(0, "Hello", 10, 2,"Android", null, null, Price(1212.21, "RUB")))
     }
 }
 
@@ -109,9 +117,9 @@ fun CardViewPreview() {
 @Composable
 fun CardViewListPreview() {
     val l :List<RequestDTO> = arrayListOf(
-        RequestDTO(0, "Hello1", 10, 2,"Android", null, null),
-        RequestDTO(1, "Hello2", 131, 1,"Arraved", null, null),
-        RequestDTO(2, "Hello3", 1210, 3,"sa", null, null)
+        RequestDTO(0, "Hello1", 10, 2,"Android", null, null, null),
+        RequestDTO(1, "Hello2", 131, 1,"Arraved", null, null, null),
+        RequestDTO(2, "Hello3", 1210, 3,"sa", null, null, null)
     )
     ComposeTestTheme {
         CardViewList(l)

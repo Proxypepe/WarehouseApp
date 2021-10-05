@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.warehouse.repository.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.model.Contact
+import com.warehouse.repository.model.Price
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
@@ -21,14 +22,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     private var status: String?         = null
     private var arrivalDate: Date?      = null
     private var contact: Contact?       = null
+    private var price: Price?           = null
     private var currentState: State?    = null
     private var request: RequestDTO?    = null
 
 
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
-                            status: String, arrivalDate: Date?, contact: Contact?){
+                            status: String, arrivalDate: Date?, contact: Contact?, price: Price?){
         request = RequestDTO(productName=productName, amount=amount, warehousePlace=warehousePlace,
-            status=status, arrivalDate=arrivalDate, contact=contact)
+            status=status, arrivalDate=arrivalDate, contact=contact, price=price)
     }
 
     private fun insert(request: RequestDTO) = viewModelScope.launch {
@@ -46,7 +48,7 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         this.warehousePlace     = warehousePlace
         this.status             = status
         this.arrivalDate        = arrivalDate
-        initRequest(productName, amount, warehousePlace, status, arrivalDate, contact)
+        initRequest(productName, amount, warehousePlace, status, arrivalDate, contact, price)
     }
 
     fun writeRequest(){
@@ -56,6 +58,10 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     fun setContact(contact: Contact) {
         this.contact = contact
+    }
+
+    fun setPrice(price: Price) {
+        this.price = price
     }
 
     fun saveState(productName: String, amount: String, warehousePlace: String, status: String){

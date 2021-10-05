@@ -7,19 +7,20 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.warehouse.domain.ContactViewModel
+import com.warehouse.domain.ExchangeViewModel
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.activity.MainActivity
 import com.warehouse.presentation.screens.*
 import com.warehouse.repository.model.Request
 
 @Composable
-fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactViewModel, fullUri: Uri?) {
+fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactViewModel,
+                  exchangeViewModel: ExchangeViewModel, fullUri: Uri?) {
     Surface(color = MaterialTheme.colors.background) {
         val bottomItems = listOf("Requests", "Make request")
         val navController = rememberNavController()
@@ -42,7 +43,8 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                     { StartCardViewList(navController, requestViewModel) }
                 }
 
-                composable("Make request") { MakeRequestScreen(navController, requestViewModel) }
+                composable("Make request") { MakeRequestScreen(navController, requestViewModel,
+                                                                    exchangeViewModel) }
 
                 composable("details") {
                     navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")

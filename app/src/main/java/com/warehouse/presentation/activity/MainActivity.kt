@@ -1,27 +1,25 @@
 package com.warehouse.presentation.activity
 
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideOutHorizontally
+import androidx.navigation.NavDestination.Companion.hierarchy
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
-import androidx.compose.material.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
+
 import com.warehouse.domain.*
 
 import com.warehouse.presentation.navigation.AppNavigation
 import com.warehouse.presentation.screens.*
 import com.warehouse.repository.RequestsApplication
-import com.warehouse.repository.model.Request
 
 
 
@@ -30,29 +28,43 @@ class MainActivity : ComponentActivity() {
         RequestViewModelFactory((application as RequestsApplication).repository)
     }
 
+    private val exchangeViewModel: ExchangeViewModel by viewModels {
+        ExchangeViewModelFactory((application as RequestsApplication).exchangeApi)
+    }
+
+
     private var contactViewModel = ContactViewModel()
 
     private var loginViewModel = LoginViewModel()
     private var signupViewModel = SignupViewModel()
 
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val fullUri = intent.data
         var start = "Login"
-
+        exchangeViewModel
         setContent {
-            val navController = rememberNavController()
+            val navController = rememberAnimatedNavController()
             fullUri?.let {
                 start = "App"
             }
-            NavHost(navController = navController, startDestination = start){
-                composable("Login")  { LoginScreen(navController, loginViewModel) }
+            AnimatedNavHost(navController = navController, startDestination = start){
+                composable("Login", exitTransition = { _, target ->
+                    if (target.destination.hierarchy.any { it.route == "Login"}) {
+                     slideOutHorizontally(targetOffsetX = { - 1000 })
+                    }else {
+                        null
+                    }
+                })  { LoginScreen(navController, loginViewModel) }
                 composable("Signup") { SighupScreen(navController, signupViewModel) }
-                composable("App") { AppNavigation(requestViewModel, contactViewModel, fullUri)}
+                composable("App", enterTransition = { _, _ ->
+                    fadeIn(animationSpec = tween(2000))
+
+                }) {
+                    AppNavigation(requestViewModel, contactViewModel, exchangeViewModel ,fullUri)}
             }
-
-
         }
     }
 }

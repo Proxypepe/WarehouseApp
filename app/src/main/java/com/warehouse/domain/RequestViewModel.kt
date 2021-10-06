@@ -10,7 +10,8 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
 
-data class State(val productName: String, val amount: String, val warehousePlace: String, val status: String)
+data class State(val productName: String, val amount: String, val warehousePlace: String,
+                 val status: String, val price_value: String)
 
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
@@ -22,7 +23,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     private var status: String?         = null
     private var arrivalDate: Date?      = null
     private var contact: Contact?       = null
-    private var price: Price?           = null
+    private var price: String?          = null
+    private var priceBase: String?      = null
     private var currentState: State?    = null
     private var request: RequestDTO?    = null
 
@@ -37,18 +39,22 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         repository.insert(request)
     }
 
-    fun deleteAll() = viewModelScope.launch {
-        repository.deleteAll()
-    }
+//    fun deleteAll() = viewModelScope.launch {
+//        repository.deleteAll()
+//    }
 
     fun setRequest(productName: String, amount: Int, warehousePlace: Int,
-                    status: String, arrivalDate: Date?) {
+                    status: String, arrivalDate: Date?, price: String) {
         this.productName        = productName
         this.amount             = amount
         this.warehousePlace     = warehousePlace
         this.status             = status
         this.arrivalDate        = arrivalDate
-        initRequest(productName, amount, warehousePlace, status, arrivalDate, contact, price)
+        this.price              = price
+        val p = price.toDouble()
+        val b = priceBase ?: "RUB"
+        initRequest(productName, amount, warehousePlace, status, arrivalDate,
+            contact, Price(p, b))
     }
 
     fun writeRequest(){
@@ -60,12 +66,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         this.contact = contact
     }
 
-    fun setPrice(price: Price) {
-        this.price = price
-    }
-
-    fun saveState(productName: String, amount: String, warehousePlace: String, status: String){
-        currentState = State(productName, amount, warehousePlace, status)
+    fun saveState(productName: String, amount: String, warehousePlace: String, status: String, price: String){
+        currentState = State(productName, amount, warehousePlace, status,  price)
     }
 
     fun getRequestById(id: Int): Flow<RequestDTO> {
@@ -76,8 +78,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         return currentState
     }
 
-    fun getRequest(): RequestDTO? {
-        return request
+    fun setPriceBase(base: String) {
+        this.priceBase = base
     }
 
     fun clear() {

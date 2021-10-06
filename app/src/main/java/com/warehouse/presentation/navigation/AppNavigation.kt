@@ -43,8 +43,7 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                     { StartCardViewList(navController, requestViewModel) }
                 }
 
-                composable("Make request") { MakeRequestScreen(navController, requestViewModel,
-                                                                    exchangeViewModel) }
+                composable("Make request") { MakeRequestScreen(navController, requestViewModel) }
 
                 composable("details") {
                     navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")

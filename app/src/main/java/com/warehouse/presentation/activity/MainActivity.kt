@@ -44,7 +44,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val fullUri = intent.data
         var start = "Login"
-        exchangeViewModel
         setContent {
             val navController = rememberAnimatedNavController()
             fullUri?.let {

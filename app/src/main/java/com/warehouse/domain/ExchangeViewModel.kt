@@ -1,49 +1,111 @@
 package com.warehouse.domain
 
 import android.util.Log
+import androidx.annotation.WorkerThread
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import com.warehouse.repository.model.ExchangeItem
 import com.warehouse.repository.model.Price
+import com.warehouse.repository.remote.RemoteRepository
+import kotlinx.coroutines.delay
 import com.warehouse.repository.remote.api.ExchangeApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class ExchangeViewModel(private val exchangeApi: ExchangeApi) : ViewModel(){
+class ExchangeViewModel(private val remoteRepository: RemoteRepository) : ViewModel(){
 
-    private val compositeDisposable = CompositeDisposable()
+    // private val compositeDisposable = CompositeDisposable()
+    private val _price = MutableLiveData(Price(-1.0, "RUB"))
+    var price: LiveData<Price> = _price
 
-    private var price: Price? = null
+    val loading = MutableLiveData(false)
 
-    override fun onCleared() {
-        compositeDisposable.clear()
-        super.onCleared()
-    }
+//    override fun onCleared() {
+//        compositeDisposable.clear()
+//        super.onCleared()
+//    }
 
-    fun fetchExchange(amount: String,
-            from: String, to: String) {
-        compositeDisposable.add(exchangeApi.getCulcedExchange(amount, from, to)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ exchangeItem ->
-                Log.d("Test", exchangeItem.rates.value.toString())
-                exchangeItem?.let {
-                    price = Price(exchangeItem.rates.value, to)
+
+
+    fun getPrice(amount: String, from: String, to: String){
+        loading.value = true
+        remoteRepository.getExchangeItem(amount, from, to).enqueue(object : Callback<ExchangeItem> {
+            override fun onResponse(call: Call<ExchangeItem>, response: Response<ExchangeItem>) {
+
+                if (response.isSuccessful) {
+                    val req = response.body()
+                    req?.let{
+                        price = MutableLiveData(Price(req.rates.value , to))
+                        loading.value = false
+
+                    }
                 }
-            },{
 
-            }))
+            }
+
+            override fun onFailure(call: Call<ExchangeItem>, t: Throwable) {
+                loading.value = false
+            }
+        })
+
 
     }
+
+
+    
+//    fun getPrice(amount: String, from: String, to: String) : MutableState<Price> {
+//        fetchExchange(amount, from, to)
+//        return price
+//    }
 }
 
-class ExchangeViewModelFactory(private val exchangeApi: ExchangeApi) : ViewModelProvider.Factory {
+class ExchangeViewModelFactory(private val remoteRepository: RemoteRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ExchangeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ExchangeViewModel(exchangeApi) as T
+            return ExchangeViewModel(remoteRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
+
+//    fun fetchExchange(amount: String, from: String, to: String) {
+//
+//        loading.value = true
+//        compositeDisposable.add(remoteRepository.getExchangeItem(amount, from, to)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({ exchangeItem ->
+//                Log.d("Test", exchangeItem.rates.value.toString())
+//                exchangeItem?.let {
+//                    price.value = Price(exchangeItem.rates.value, to)
+//                }
+//                loading.value = false
+//            }, {
+//                loading.value = false
+//            })
+//        )
+//
+//    }
+
+
+
+//@WorkerThread
+//fun getPrice(amount: String, from: String, to: String) {
+//    viewModelScope.launch {
+//        loading.value = true
+//        delay(2000)
+//        val response =  remoteRepository.getExchangeItem(amount, from, to)
+//        price.value = Price(response?.rates?.value ?: -0.0, response?.base ?: "RUB")
+//
+//        loading.value = false
+//    }
+//}

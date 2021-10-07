@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val exchangeViewModel: ExchangeViewModel by viewModels {
-        ExchangeViewModelFactory((application as RequestsApplication).exchangeApi)
+        ExchangeViewModelFactory((application as RequestsApplication).remoteRepository)
     }
 
 

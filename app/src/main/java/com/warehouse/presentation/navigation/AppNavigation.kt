@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.warehouse.domain.ContactViewModel
@@ -26,6 +29,8 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
         val navController = rememberNavController()
         val uriPat = "www.warehouse_app.com"
         val context = LocalContext.current
+//        val loading = exchangeViewModel.loading.observeAsState()
+//        val price_ = exchangeViewModel.price.observeAsState()
         Scaffold(
             bottomBar = {
                 BottomNavigation {
@@ -40,7 +45,9 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
             NavHost(navController = navController, startDestination = "Requests") {
                 composable("Requests") {
                     Box(modifier = Modifier.padding(innerPadding))
-                    { StartCardViewList(navController, requestViewModel) }
+                    {
+//                        loading.value?.let { it1 -> LoadProgress(it1) }
+                        StartCardViewList(navController, requestViewModel) }
                 }
 
                 composable("Make request") { MakeRequestScreen(navController, requestViewModel) }
@@ -48,9 +55,34 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                 composable("details") {
                     navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")
                         ?.let {
-                            DetailScreen(request = it)
+                            DetailScreen(request = it, navController)
                         }
                 }// route detail
+
+                composable("details/change/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.StringType}))
+                { backStackEntry ->
+                    val arg = backStackEntry.arguments?.getString("id")
+                    if ( arg != null)
+                    {
+                        PriceChooseScreen(navController, requestViewModel, exchangeViewModel, Integer.parseInt(arg))
+                    }
+                    else {
+                        Text("Something went wrong")
+                    }
+                }
+
+                composable("loading/{id}",
+                    arguments = listOf(navArgument("id") { type = NavType.StringType}))
+                { backStackEntry ->
+                    val arg = backStackEntry.arguments?.getString("id")
+                    if ( arg != null) {
+                        LoadingScreen(requestViewModel, exchangeViewModel, navController, Integer.parseInt(arg))
+                    }
+                    else {
+                        Text("Something went wrong 112")
+                    }
+                }
 
                 composable("contacts") {
                     ContactScreen(

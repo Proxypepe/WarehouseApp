@@ -94,12 +94,6 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
         }) {
             Text("Add Contact")
         }
-//            Spacer(modifier = Modifier.padding(15.dp))
-//            Button(onClick = {
-//                exchangeViewModel?.fetchExchange("10", "USD", "RUB")
-//            }) {
-//                Text("Add Price")
-//            }
         Spacer(modifier = Modifier.padding(10.dp))
 
         Button(onClick = {
@@ -130,7 +124,7 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
 @Composable
 fun Dropdown(requestViewModel: RequestViewModel?) {
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("RUB", "USD", "GBT")
+    val items = listOf("RUB", "USD", "GBP")
     var selectedIndex by remember { mutableStateOf(0) }
 
     Box(modifier = Modifier.padding(top=10.dp, bottom=10.dp).width(100.dp).height(50.dp)){

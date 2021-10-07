@@ -1,6 +1,7 @@
 package com.warehouse.domain
 
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.warehouse.repository.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
@@ -39,6 +40,11 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         repository.insert(request)
     }
 
+    private fun update(request: RequestDTO) = viewModelScope.launch {
+        repository.update(request)
+    }
+
+
 //    fun deleteAll() = viewModelScope.launch {
 //        repository.deleteAll()
 //    }
@@ -74,12 +80,38 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         return repository.getRequestById(id)
     }
 
+    fun getPriceBase(): String? {
+        return priceBase
+    }
+
     fun getState(): State? {
         return currentState
     }
 
+
+    fun reCreateRequestByPrice(requestDTO: RequestDTO, price: Price) {
+        Log.d("ReCreate", "dsd")
+        val newRequest = RequestDTO(
+            requestDTO.id,
+            requestDTO.productName,
+            requestDTO.amount,
+            requestDTO.warehousePlace,
+            requestDTO.status,
+            requestDTO.arrivalDate,
+            requestDTO.contact,
+            price
+            )
+        request = newRequest
+    }
+
+
     fun setPriceBase(base: String) {
         this.priceBase = base
+    }
+
+
+    fun update() {
+        request?.let { update(it) }
     }
 
     fun clear() {

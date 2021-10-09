@@ -90,7 +90,6 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
 
     fun reCreateRequestByPrice(requestDTO: RequestDTO, price: Price) {
-        Log.d("ReCreate", "dsd")
         val newRequest = RequestDTO(
             requestDTO.id,
             requestDTO.productName,

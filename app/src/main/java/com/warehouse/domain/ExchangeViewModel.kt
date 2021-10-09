@@ -1,19 +1,10 @@
 package com.warehouse.domain
 
 import android.util.Log
-import androidx.annotation.WorkerThread
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.*
 import com.warehouse.repository.model.ExchangeItem
 import com.warehouse.repository.model.Price
 import com.warehouse.repository.remote.RemoteRepository
-import kotlinx.coroutines.delay
-import com.warehouse.repository.remote.api.ExchangeApi
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback

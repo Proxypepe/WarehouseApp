@@ -2,7 +2,7 @@ package com.warehouse.presentation.screens
 
 
 import android.annotation.SuppressLint
-import android.util.Log
+//import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -41,7 +40,7 @@ fun LoadingScreen(requestViewModel: RequestViewModel, exchangeViewModel: Exchang
     val requestDTO: RequestDTO by requestDto.observeAsState(
         RequestDTO(0, "", 0, 0,"", null, null, null)
     )
-    Log.d("DD", "req $requestDTO")
+//    Log.d("DD", "req $requestDTO")
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.padding(top = 100.dp, start = 50.dp,
@@ -55,9 +54,10 @@ fun LoadingScreen(requestViewModel: RequestViewModel, exchangeViewModel: Exchang
                 onClick = {
                     val _price = price.value
                     if (_price != null)  {
-                        Log.d("Loading", _price.currency)
+                        val _price_  = "%.2f".format(_price.price).toDouble()
+//                        Log.d("Loading", "$_price_")
                         requestViewModel.reCreateRequestByPrice(requestDTO, Price(
-                            _price.price, _price.currency)
+                            _price_, _price.currency)
                         )
                         requestViewModel.update()
                     }

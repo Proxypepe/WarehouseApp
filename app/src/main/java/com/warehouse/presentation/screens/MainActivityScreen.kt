@@ -91,7 +91,7 @@ fun CardView(request: RequestDTO, navController: NavController? = null) {
             Row {
                 Text(text = "Price", modifier = Modifier.width(250.dp))
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = request.price?.price?.toString() ?: "Unknown" )
+                Text(text = "%.2f".format(request.price?.price) ?: "Unknown" )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(text = request.price?.currency ?: "")
             }

@@ -7,6 +7,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.warehouse.repository.model.Contact
+import com.warehouse.repository.model.Price
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import java.util.*
@@ -32,7 +33,9 @@ data class RequestDTO(
     @ColumnInfo(name = "arrival_date")
     val arrivalDate: Date?,
     @Nullable
-    @Embedded val contact: Contact?
+    @Embedded val contact: Contact?,
+    @Nullable
+    @Embedded val price: Price?
 )
 
 // https://developer.android.com/training/data-storage/room/relationships

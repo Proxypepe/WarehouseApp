@@ -11,6 +11,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,15 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.asLiveData
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.model.Request
-import com.warehouse.repository.model.toRequest
 import com.warehouse.repository.model.toRequestDTO
 
 
-// TODO Thing about add one more viewModel, special for detail screens
 @Composable
 fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
     val requests by  requestViewModel.allRequests.observeAsState()
@@ -43,9 +44,12 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
         } else {
             val requestFromBD = requestViewModel.getRequestById(id)
             val liveData = requestFromBD.asLiveData()
-            val requestDTO: RequestDTO by liveData.observeAsState(RequestDTO(0, "", 0, 0,"", null, null))
-            val request: Request = toRequest(requestDTO)
-            DetailScreen(request = request)
+            val requestDTO: RequestDTO by liveData.observeAsState(
+                RequestDTO(0, "", 0, 0,"", null, null, null))
+            Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center) {
+                CardView(requestDTO, null)
+            }
         }
     } else {
         ErrorScreen()
@@ -53,7 +57,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
 }
 
 @Composable
-fun DetailScreen (request: Request) {
+fun DetailScreen (request: Request, navController: NavController){
     val context = LocalContext.current
     val req = toRequestDTO(request)
     Column (
@@ -64,16 +68,33 @@ fun DetailScreen (request: Request) {
             ){
         CardView(req)
         Spacer(modifier = Modifier.padding(top=10.dp))
-        Button(onClick = { getShareIntend(context, request.id)},
-            colors = ButtonDefaults.textButtonColors(
-                backgroundColor = Color.White),
-            modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
-            Icon(
-                imageVector = Icons.Filled.Share,
-                contentDescription = "Localized description",
-                modifier = Modifier.padding(end = 8.dp),
-                tint = Color(0xFFCC3333))
+        Row {
+            Button(onClick = { getShareIntend(context, request.id)},
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.White),
+                modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
+                Icon(
+                    imageVector = Icons.Filled.Share,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = 8.dp),
+                    tint = Color(0xFFCC3333))
                 Text(text = "Share me")
+            }
+            Spacer(modifier = Modifier.padding(5.dp))
+            Button(onClick =  {
+                navController.navigate("details/change/${request.id}")
+            }, colors = ButtonDefaults.textButtonColors(
+                backgroundColor = Color.White),
+                modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
+
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = 8.dp),
+                    tint = Color(0xFFCC3333))
+                Spacer(modifier = Modifier.padding(top=10.dp))
+                Text(text = "Change currency")
+            }
         }
     }
 }
@@ -90,7 +111,9 @@ fun ErrorScreen() {
 @Preview(showBackground = true)
 @Composable
 fun DetailScreenPreview () {
-    DetailScreen(Request(0, "Hello", 10, 2, "Android", null, null))
+    val navController = rememberNavController()
+    DetailScreen(Request(0, "Hello", 10, 2, "Android", null, null, null),
+        navController)
 }
 
 @Preview(showBackground = true)

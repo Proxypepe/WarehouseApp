@@ -33,7 +33,7 @@ fun PriceChooseScreen(navController: NavController, requestViewModel: RequestVie
     } else{
         val liveData = requestDto.asLiveData()
         val requestDTO: RequestDTO by liveData.observeAsState(
-            RequestDTO(0, "", 0, 0,"", null, null, null))
+            RequestDTO(0, 0, "", 0, 0,"", null, null, null))
         val prevCurrency = requestDTO.price?.currency
 
         Column( modifier = Modifier

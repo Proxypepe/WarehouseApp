@@ -45,7 +45,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
             val requestFromBD = requestViewModel.getRequestById(id)
             val liveData = requestFromBD.asLiveData()
             val requestDTO: RequestDTO by liveData.observeAsState(
-                RequestDTO(0, "", 0, 0,"", null, null, null))
+                RequestDTO(0, 0, "", 0, 0,"", null, null, null))
             Box(modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center) {
                 CardView(requestDTO, null)

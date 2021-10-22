@@ -1,22 +1,23 @@
 package com.warehouse.domain
 
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.warehouse.repository.RequestRepository
+import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.model.Contact
 import com.warehouse.repository.model.Price
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 data class State(val productName: String, val amount: String, val warehousePlace: String,
                  val status: String, val price_value: String)
 
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
-    val allRequests: LiveData<List<RequestDTO>> = repository.allRequests.asLiveData()
+    var tmp = MutableLiveData<List<RequestDTO>>()
+    val allRequests: LiveData<List<RequestDTO>> = tmp
 
     private var productName: String?    = null
     private var amount: Int?            = null
@@ -33,17 +34,19 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
                             status: String, arrivalDate: Date?, contact: Contact?, price: Price?){
         request = RequestDTO(productName=productName, amount=amount, warehousePlace=warehousePlace,
-            status=status, arrivalDate=arrivalDate, contact=contact, price=price)
+            status=status, arrivalDate=arrivalDate, contact=contact, price=price, userID = 0)
     }
 
-    private fun insert(request: RequestDTO) = viewModelScope.launch {
-        repository.insert(request)
-    }
+//    private fun insert(request: RequestDTO) = viewModelScope.launch {
+//        repository.insert(request)
+//    }
 
-    private fun update(request: RequestDTO) = viewModelScope.launch {
-        repository.update(request)
-    }
+//    private fun update(request: RequestDTO) = viewModelScope.launch {
+//        repository.update(request)
+//    }
+    private fun update(request: RequestDTO) =  viewModelScope.launch{
 
+    }
 
 //    fun deleteAll() = viewModelScope.launch {
 //        repository.deleteAll()
@@ -64,8 +67,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
     fun writeRequest(){
-        this.request?.let { insert(it) }
-        contact = null
+//        this.request?.let { insert(it) }
+//        contact = null
     }
 
     fun setContact(contact: Contact) {
@@ -76,9 +79,14 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         currentState = State(productName, amount, warehousePlace, status,  price)
     }
 
-    fun getRequestById(id: Int): Flow<RequestDTO> {
-        return repository.getRequestById(id)
+    fun getRequestById(id: Int): Flow<RequestDTO> = flow {
+
     }
+
+
+//    {
+//        return repository.getRequestById(id)
+//    }
 
     fun getPriceBase(): String? {
         return priceBase
@@ -90,17 +98,17 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
 
     fun reCreateRequestByPrice(requestDTO: RequestDTO, price: Price) {
-        val newRequest = RequestDTO(
-            requestDTO.id,
-            requestDTO.productName,
-            requestDTO.amount,
-            requestDTO.warehousePlace,
-            requestDTO.status,
-            requestDTO.arrivalDate,
-            requestDTO.contact,
-            price
-            )
-        request = newRequest
+//        val newRequest = RequestDTO(
+//            requestDTO.requestID,
+//            requestDTO.productName,
+//            requestDTO.amount,
+//            requestDTO.warehousePlace,
+//            requestDTO.status,
+//            requestDTO.arrivalDate,
+//            requestDTO.contact,
+//            price
+//            )
+//        request = newRequest
     }
 
 

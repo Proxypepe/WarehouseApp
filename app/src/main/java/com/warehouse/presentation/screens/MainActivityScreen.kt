@@ -56,7 +56,7 @@ fun CardView(request: RequestDTO, navController: NavController? = null) {
             Row {
                 Text(text = "Request id", modifier = Modifier.width(250.dp))
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = request.id.toString())
+                Text(text = request.requestID.toString())
             }
             Row {
                 Text(text = "Product name", modifier = Modifier.width(250.dp))
@@ -109,7 +109,7 @@ fun NavController?.navigate(route: String, params: Bundle?, builder: NavOptionsB
 @Composable
 fun CardViewPreview() {
     ComposeTestTheme {
-        CardView(RequestDTO(0, "Hello", 10, 2,"Android", null, null, Price(1212.21, "RUB")))
+        CardView(RequestDTO(0, 0, "Hello", 10, 2,"Android", null, null, Price(1212.21, "RUB")))
     }
 }
 
@@ -117,9 +117,9 @@ fun CardViewPreview() {
 @Composable
 fun CardViewListPreview() {
     val l :List<RequestDTO> = arrayListOf(
-        RequestDTO(0, "Hello1", 10, 2,"Android", null, null, null),
-        RequestDTO(1, "Hello2", 131, 1,"Arraved", null, null, null),
-        RequestDTO(2, "Hello3", 1210, 3,"sa", null, null, null)
+        RequestDTO(0, 0,"Hello1", 10, 2,"Android", null, null, null),
+        RequestDTO(1, 0, "Hello2", 131, 1,"Arraved", null, null, null),
+        RequestDTO(2, 0, "Hello3", 1210, 3,"sa", null, null, null)
     )
     ComposeTestTheme {
         CardViewList(l)

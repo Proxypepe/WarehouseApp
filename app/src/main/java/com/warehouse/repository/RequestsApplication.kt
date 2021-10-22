@@ -1,6 +1,7 @@
 package com.warehouse.repository
 
 import android.app.Application
+import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.RequestRoomDatabase
 import com.warehouse.repository.remote.RemoteRepository
 import com.warehouse.repository.remote.RetrofitFactory

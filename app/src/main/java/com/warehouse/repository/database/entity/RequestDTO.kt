@@ -22,7 +22,7 @@ data class RequestDTO(
     @ColumnInfo(name = "requestID")
     val requestID: Int = 0,
     @ColumnInfo(name = "userID")
-    var userID: Int,
+    var userID: Int = 0,
     @NotNull @NonNull
     @ColumnInfo(name = "product_name")
     val productName: String,
@@ -37,11 +37,11 @@ data class RequestDTO(
     val status: String,
     @Nullable
     @ColumnInfo(name = "arrival_date")
-    val arrivalDate: Date?,
+    val arrivalDate: Date? = null,
     @Nullable
-    @Embedded val contact: Contact?,
+    @Embedded val contact: Contact? = null,
     @Nullable
-    @Embedded val price: Price?
+    @Embedded val price: Price? = null
 )
 
 // https://developer.android.com/training/data-storage/room/relationships

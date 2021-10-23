@@ -4,36 +4,27 @@ import androidx.annotation.WorkerThread
 import com.warehouse.repository.database.dao.RequestDao
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserAndRequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import kotlinx.coroutines.flow.Flow
 
 class RequestRepository (private val requestDao: RequestDao){
 
-    fun getByFullName(fullName: String): Flow<UserAndRequestDTO> {
+    fun getByFullName(fullName: String): Flow<UserDTO> {
         return requestDao.getDataByFullName(fullName)
     }
 
-//    @WorkerThread
-//    suspend fun insert(userAndRequestDTO: UserAndRequestDTO) {
-//        requestDao.insert(userAndRequestDTO)
-//    }
+    fun getUserByEmail(email: String): Flow<UserDTO> {
+        return requestDao.getUserByEmail(email)
+    }
 
 
+    @WorkerThread
+    suspend fun insertUser(user: UserDTO) {
+        requestDao.insertUser(user)
+    }
 
-//    fun getRequestById(id: Int): Flow<RequestDTO>{
-//        return requestDao.getRequestById(id)
-//    }
-//    @WorkerThread
-//    suspend fun deleteAll() {
-//        requestDao.deleteAll()
-//    }
-//
-//    @WorkerThread
-//    suspend fun update(request: RequestDTO) {
-//        requestDao.update(request)
-//    }
-//
-//    @WorkerThread
-//    suspend fun delete(request: RequestDTO) {
-//        requestDao.delete(request)
-//    }
+    @WorkerThread
+    suspend fun insert(user: UserDTO, requests: List<RequestDTO>) {
+        requestDao.insertUserAndRequest(user, requests)
+    }
 }

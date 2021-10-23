@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.warehouse.domain.SignupViewModel
+import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserDTO
 
 @Composable
@@ -83,7 +84,7 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
                 shape = RoundedCornerShape(8.dp)
             )
 
-            Button( onClick = {  },
+            Button( onClick = { createAcc(fullName.value.text, email.value.text, password.value.text, signupViewModel) },
                 modifier = Modifier.align(Alignment.End)) { Text("SIGN UP")}
             Spacer(modifier = Modifier.padding(top = 150.dp))
             Row(modifier = Modifier.fillMaxWidth(),
@@ -101,7 +102,12 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
 
 fun createAcc(fullName: String, email: String, password: String, signupViewModel: SignupViewModel){
     val user = UserDTO(fullname = fullName, email = email, password = password, role = "single_user")
+    val requests = listOf(
+        RequestDTO(productName = " 12", amount = 12, warehousePlace = 1, status = "prog"),
+        RequestDTO(productName = "13", amount = 13, warehousePlace = 2, status = "end"),
+        )
 
+    signupViewModel.insert(user, requests)
 }
 
 

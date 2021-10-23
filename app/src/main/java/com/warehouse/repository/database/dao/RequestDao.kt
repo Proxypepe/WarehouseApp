@@ -30,12 +30,21 @@ abstract class RequestDao {
 
     @Transaction
     @Query("SELECT * FROM User WHERE fullname = :fullName")
-    abstract fun getDataByFullName(fullName: String) : Flow<UserAndRequestDTO>
+    abstract fun getDataByFullName(fullName: String) : Flow<UserDTO>
+
+    @Transaction
+    @Query("SELECT * FROM User WHERE email = :email")
+    abstract fun getUserByEmail(email: String) : Flow<UserDTO>
+
+
+    @Transaction
+    @Query("SELECT * FROM Request WHERE userID = :userID")
+    abstract fun getRequestsByUserID(userID: Int) : Flow<RequestDTO>
 
     @Insert(onConflict = REPLACE)
     abstract suspend fun insertUser(user: UserDTO)
 
-    @Insert(onConflict = REPLACE)
+    @Insert
     abstract suspend fun insertRequest(requests: List<RequestDTO>)
 
     @Insert

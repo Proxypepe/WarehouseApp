@@ -9,6 +9,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.material.Text
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -38,6 +39,10 @@ class MainActivity : ComponentActivity() {
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContent {
+            Text("Working")
+
+        }
 //        val fullUri = intent.data
 //        var start = "Login"
 //        setContent {

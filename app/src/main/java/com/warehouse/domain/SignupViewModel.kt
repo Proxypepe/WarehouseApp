@@ -2,8 +2,12 @@ package com.warehouse.domain
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.warehouse.repository.database.RequestRepository
+import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import com.warehouse.repository.remote.RemoteRepository
+import kotlinx.coroutines.launch
 
 class SignupViewModel(private val repository: RequestRepository?): ViewModel(){
 
@@ -23,8 +27,12 @@ class SignupViewModel(private val repository: RequestRepository?): ViewModel(){
 
     private fun comparePasswords(): Boolean = password == confirmedPassword
 
-
-
+    fun insert(user: UserDTO) = viewModelScope.launch {
+        repository?.insertUser(user)
+    }
+    fun insert(user: UserDTO, requests: List<RequestDTO>) = viewModelScope.launch {
+        repository?.insert(user, requests)
+    }
 }
 
 

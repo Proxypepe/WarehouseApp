@@ -86,24 +86,31 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel) {
             Spacer(modifier = Modifier.padding(5.dp))
             Button( onClick = {
                 var user: UserDTO? = null
+                var access: Boolean = false
                 loginViewModel.getUserByEmail(login.value.text)?.asLiveData()?.observe(context as (SignUpInActivity), Observer {
                     if ( it != null){
                         if (it.email == login.value.text && it.password == password.value.text)
                         {
                             user = it
+                            access = true
                         } else {
+                            user = null
+                            access = false
                             Toast.makeText(context, "Uncorrect Email or password", Toast.LENGTH_LONG).show()
                         }
                     } else {
                         Toast.makeText(context, "Uncorrect Email or password", Toast.LENGTH_LONG).show()
                     }
-                })
-                user.let {
-                    val intent = Intent(context, MainActivity::class.java).apply {
-                        user?.let { it1 -> putExtra("User_Id", it1.userID) }
+                    if (access)
+                    {
+                        val intent = Intent(context, MainActivity::class.java).apply {
+                            user?.let { it1 -> putExtra("User_Id", it1.userID) }
+                        }
+                        context.startActivity(intent)
                     }
-                    context.startActivity(intent)
-                }},
+                })
+
+                },
                 modifier = Modifier.align(Alignment.End)) { Text("LOGIN")}
             Spacer(modifier = Modifier.padding(top = 225.dp))
             Row(modifier = Modifier.fillMaxWidth(),

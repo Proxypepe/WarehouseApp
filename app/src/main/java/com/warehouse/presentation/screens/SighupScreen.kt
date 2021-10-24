@@ -102,12 +102,8 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
 
 fun createAcc(fullName: String, email: String, password: String, signupViewModel: SignupViewModel){
     val user = UserDTO(fullname = fullName, email = email, password = password, role = "single_user")
-    val requests = listOf(
-        RequestDTO(productName = " 12", amount = 12, warehousePlace = 1, status = "prog"),
-        RequestDTO(productName = "13", amount = 13, warehousePlace = 2, status = "end"),
-        )
 
-    signupViewModel.insert(user, requests)
+    signupViewModel.insert(user)
 }
 
 

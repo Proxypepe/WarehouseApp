@@ -25,46 +25,36 @@ import com.warehouse.repository.RequestsApplication
 
 
 class MainActivity : ComponentActivity() {
-//    private val requestViewModel: RequestViewModel by viewModels {
-//        RequestViewModelFactory((application as RequestsApplication).repository)
-//    }
-//
-//    private val exchangeViewModel: ExchangeViewModel by viewModels {
-//        ExchangeViewModelFactory((application as RequestsApplication).remoteRepository)
-//    }
-//
-//
-//    private var contactViewModel = ContactViewModel()
+    private val requestViewModel: RequestViewModel by viewModels {
+        RequestViewModelFactory((application as RequestsApplication).repository)
+    }
+
+    private val adminViewModel: AdminViewModel by viewModels {
+        AdminViewModelFactory((application as RequestsApplication).repository)
+    }
+
+    private val exchangeViewModel: ExchangeViewModel by viewModels {
+        ExchangeViewModelFactory((application as RequestsApplication).remoteRepository)
+    }
+
+    private var contactViewModel = ContactViewModel()
 
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val intent = intent
+        val userId = intent.getIntExtra("User_Id", 0)
+        requestViewModel.setUserId(userId)
+
+
         setContent {
-            Text("Working")
+            AppNavigation(
+                requestViewModel = requestViewModel,
+                contactViewModel = contactViewModel,
+                exchangeViewModel = exchangeViewModel,
+                adminViewModel = adminViewModel
+            )
 
         }
-//        val fullUri = intent.data
-//        var start = "Login"
-//        setContent {
-//            val navController = rememberAnimatedNavController()
-//            fullUri?.let {
-//                start = "App"
-//            }
-//            AnimatedNavHost(navController = navController, startDestination = start){
-//                composable("Login", exitTransition = { _, target ->
-//                    if (target.destination.hierarchy.any { it.route == "Login"}) {
-//                     slideOutHorizontally(targetOffsetX = { - 1000 })
-//                    }else {
-//                        null
-//                    }
-//                })  { LoginScreen(navController, loginViewModel) }
-//                composable("Signup") { SighupScreen(navController, signupViewModel) }
-//                composable("App", enterTransition = { _, _ ->
-//                    fadeIn(animationSpec = tween(2000))
-//
-//                }) {
-//                    AppNavigation(requestViewModel, contactViewModel, exchangeViewModel ,fullUri)}
-//            }
-//        }
     }
 }

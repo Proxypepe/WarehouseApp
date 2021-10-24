@@ -1,9 +1,11 @@
 package com.warehouse.domain
 
 
+//import android.util.Log
 import androidx.lifecycle.*
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import com.warehouse.repository.model.Contact
 import com.warehouse.repository.model.Price
 import kotlinx.coroutines.launch
@@ -15,9 +17,10 @@ data class State(val productName: String, val amount: String, val warehousePlace
                  val status: String, val price_value: String)
 
 class RequestViewModel(private val repository: RequestRepository): ViewModel() {
+    var userId: Int? = null
 
-    var tmp = MutableLiveData<List<RequestDTO>>()
-    val allRequests: LiveData<List<RequestDTO>> = tmp
+    var userData: LiveData<UserDTO>? = null
+    var allRequests: LiveData<List<RequestDTO>>? = null
 
     private var productName: String?    = null
     private var amount: Int?            = null
@@ -33,13 +36,18 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
                             status: String, arrivalDate: Date?, contact: Contact?, price: Price?){
-        request = RequestDTO(productName=productName, amount=amount, warehousePlace=warehousePlace,
-            status=status, arrivalDate=arrivalDate, contact=contact, price=price, userID = 0)
+        request = userId?.let {
+            RequestDTO(productName=productName, amount=amount, warehousePlace=warehousePlace,
+                status=status, arrivalDate=arrivalDate, contact=contact, price=price, userID = it
+            )
+        }
     }
 
-//    private fun insert(request: RequestDTO) = viewModelScope.launch {
-//        repository.insert(request)
-//    }
+
+
+    private fun insert(request: RequestDTO) = viewModelScope.launch {
+        repository.insert(request)
+    }
 
 //    private fun update(request: RequestDTO) = viewModelScope.launch {
 //        repository.update(request)
@@ -48,9 +56,15 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
     }
 
-//    fun deleteAll() = viewModelScope.launch {
-//        repository.deleteAll()
-//    }
+    private fun getRequestsByUserID(userID: Int): Flow<List<RequestDTO>> {
+        return repository.getRequestsByUserID(userID)
+    }
+
+    fun setUserId(userID: Int) {
+        this.userId = userID
+        allRequests = getRequestsByUserID(userID).asLiveData()
+        this.userData = repository.getUserById(userID).asLiveData()
+    }
 
     fun setRequest(productName: String, amount: Int, warehousePlace: Int,
                     status: String, arrivalDate: Date?, price: String) {
@@ -67,8 +81,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
     fun writeRequest(){
-//        this.request?.let { insert(it) }
-//        contact = null
+        this.request?.let { insert(it) }
+        contact = null
     }
 
     fun setContact(contact: Contact) {
@@ -84,9 +98,6 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
 
-//    {
-//        return repository.getRequestById(id)
-//    }
 
     fun getPriceBase(): String? {
         return priceBase
@@ -98,17 +109,18 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
 
 
     fun reCreateRequestByPrice(requestDTO: RequestDTO, price: Price) {
-//        val newRequest = RequestDTO(
-//            requestDTO.requestID,
-//            requestDTO.productName,
-//            requestDTO.amount,
-//            requestDTO.warehousePlace,
-//            requestDTO.status,
-//            requestDTO.arrivalDate,
-//            requestDTO.contact,
-//            price
-//            )
-//        request = newRequest
+        val newRequest = RequestDTO(
+            requestDTO.requestID,
+            requestDTO.userID,
+            requestDTO.productName,
+            requestDTO.amount,
+            requestDTO.warehousePlace,
+            requestDTO.status,
+            requestDTO.arrivalDate,
+            requestDTO.contact,
+            price
+            )
+        request = newRequest
     }
 
 

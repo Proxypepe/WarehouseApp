@@ -42,6 +42,7 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
 
     val context = LocalContext.current
 
+    val userID = requestViewModel?.userId
     
     Column (
         modifier = Modifier

@@ -86,30 +86,3 @@ fun PriceChooseScreenPreview() {
     val navController = rememberNavController()
     PriceChooseScreen(navController, null, null, 0 )
 }
-
-//fun makeExchangeRequest(amount: String, from: String, to: String, requestViewModel: RequestViewModel?,
-//                        exchangeViewModel: ExchangeViewModel?, context: Context
-//){
-
-//    val price: LiveData<Price>? = exchangeViewModel?.fetchExchange(amount, from, to)
-//
-//    Log.d("nullable", (price ?: "Nell") as String)
-//    price?.let {
-//        Log.d("price", "${price.price}  ${price.currency}")
-//        requestViewModel?.reCreateRequestByPrice(it)
-//        requestViewModel?.update()
-//    }
-//}
-//val req = requestViewModel.getPriceBase()
-//req?.let {
-//    Log.d("Curr", "new ${req}  old $prevCurrency" )
-//    if (prevCurrency != null) {
-//
-//        val p = exchangeViewModel?.getPrice(priceValue.value.text, prevCurrency,
-//            requestViewModel.getPriceBase()!!
-//        )
-//
-//        Log.d("Rwqwqwq", p?.currency ?: " dds")
-//
-//        makeExchangeRequest(priceValue.value.text,
-//            prevCurrency, it,  requestViewModel, exchangeViewModel, context)

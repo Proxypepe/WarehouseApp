@@ -35,7 +35,7 @@ import com.warehouse.repository.model.toRequestDTO
 
 @Composable
 fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
-    val requests by  requestViewModel.allRequests.observeAsState()
+    val requests by  requestViewModel.allRequests!!.observeAsState()
     val requestsSize  = requests?.size
 
     if (id != null &&  requestsSize != null) {

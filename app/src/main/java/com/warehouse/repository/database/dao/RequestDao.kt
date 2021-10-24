@@ -9,25 +9,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class RequestDao {
 
-//    @Query("SELECT * FROM request")
-//    fun getRequests(): Flow<List<RequestDTO>>
-//
-//    @Query("SELECT * FROM request WHERE id = :id")
-//    fun getRequestById(id: Int): Flow<RequestDTO>
-//
-//    @Insert
-//    suspend fun insert(request: RequestDTO)
-//
-//    @Update
-//    suspend fun update(request: RequestDTO)
-//
-//    @Query("DELETE FROM request")
-//    suspend fun deleteAll()
-//
-//    @Delete
-//    suspend fun delete(request: RequestDTO)
-
-
     @Transaction
     @Query("SELECT * FROM User WHERE fullname = :fullName")
     abstract fun getDataByFullName(fullName: String) : Flow<UserDTO>
@@ -36,16 +17,27 @@ abstract class RequestDao {
     @Query("SELECT * FROM User WHERE email = :email")
     abstract fun getUserByEmail(email: String) : Flow<UserDTO>
 
-
     @Transaction
     @Query("SELECT * FROM Request WHERE userID = :userID")
-    abstract fun getRequestsByUserID(userID: Int) : Flow<RequestDTO>
+    abstract fun getRequestsByUserID(userID: Int) : Flow<List<RequestDTO>>
 
-    @Insert(onConflict = REPLACE)
+    @Transaction
+    @Query("SELECT * FROM User WHERE userID = :userID")
+    abstract fun getUserById(userID: Int) : Flow<UserDTO>
+
+
+    @Transaction
+    @Query("SELECT * FROM User")
+    abstract fun getUsers() : Flow<List<UserDTO>>
+
+    @Insert
     abstract suspend fun insertUser(user: UserDTO)
 
     @Insert
-    abstract suspend fun insertRequest(requests: List<RequestDTO>)
+    abstract suspend fun insertRequest(request: RequestDTO)
+
+    @Insert
+    abstract suspend fun insertRequests(requests: List<RequestDTO>)
 
     @Insert
     @Transaction
@@ -54,6 +46,18 @@ abstract class RequestDao {
         val index = user.userID
 
         requests.forEach { it.userID = index}
-        insertRequest(requests)
+        insertRequests(requests)
     }
+
+    @Insert
+    @Transaction
+    suspend fun insertRequests(user: UserDTO, requests: List<RequestDTO>) {
+        val index = user.userID
+
+        requests.forEach { it.userID = index}
+        insertRequests(requests)
+    }
+
+    @Update
+    abstract suspend fun updateUser(user: UserDTO)
 }

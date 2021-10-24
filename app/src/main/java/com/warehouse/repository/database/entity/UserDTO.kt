@@ -12,7 +12,7 @@ data class UserDTO(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "userID")
     @NotNull @NonNull
-    val userID: Int = 1,
+    val userID: Int = 0,
     @ColumnInfo(name = "fullname")
     @NotNull @NonNull
     val fullname: String,

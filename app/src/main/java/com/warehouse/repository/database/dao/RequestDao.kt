@@ -25,12 +25,18 @@ abstract class RequestDao {
     @Query("SELECT * FROM User WHERE userID = :userID")
     abstract fun getUserById(userID: Int) : Flow<UserDTO>
 
+    @Query("SELECT * FROM Request WHERE requestID = :requestID")
+    abstract fun getRequestById(requestID: Int) : Flow<RequestDTO>
 
     @Transaction
     @Query("SELECT * FROM User")
     abstract fun getUsers() : Flow<List<UserDTO>>
 
-    @Insert
+    @Transaction
+    @Query("SELECT * FROM Request")
+    abstract fun getRequests() : Flow<List<RequestDTO>>
+
+    @Insert(onConflict = REPLACE)
     abstract suspend fun insertUser(user: UserDTO)
 
     @Insert
@@ -60,4 +66,7 @@ abstract class RequestDao {
 
     @Update
     abstract suspend fun updateUser(user: UserDTO)
+
+    @Update
+    abstract suspend fun updateRequest(request: RequestDTO)
 }

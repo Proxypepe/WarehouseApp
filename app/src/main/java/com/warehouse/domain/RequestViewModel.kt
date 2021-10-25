@@ -1,8 +1,10 @@
 package com.warehouse.domain
 
 
-//import android.util.Log
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
+import com.warehouse.presentation.activity.MainActivity
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserDTO
@@ -11,7 +13,7 @@ import com.warehouse.repository.model.Price
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+
 
 data class State(val productName: String, val amount: String, val warehousePlace: String,
                  val status: String, val price_value: String)
@@ -49,21 +51,33 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         repository.insert(request)
     }
 
-//    private fun update(request: RequestDTO) = viewModelScope.launch {
-//        repository.update(request)
-//    }
-    private fun update(request: RequestDTO) =  viewModelScope.launch{
-
+    fun update(request: RequestDTO) =  viewModelScope.launch{
+        repository.updateRequest(request)
     }
+
 
     private fun getRequestsByUserID(userID: Int): Flow<List<RequestDTO>> {
         return repository.getRequestsByUserID(userID)
     }
 
-    fun setUserId(userID: Int) {
+    fun setUserId(email: String): LiveData<UserDTO> {
+
+        return repository.getUserByEmail(email).asLiveData()
+
+    }
+
+
+    fun setUserId(userID: Int, role: String) {
         this.userId = userID
-        allRequests = getRequestsByUserID(userID).asLiveData()
+        allRequests = if (role == "admin" || role == "moderator")
+        {
+            repository.getRequests().asLiveData()
+        } else
+        {
+            repository.getRequestsByUserID(userID).asLiveData()
+        }
         this.userData = repository.getUserById(userID).asLiveData()
+        Log.d("Set user", "Set")
     }
 
     fun setRequest(productName: String, amount: Int, warehousePlace: Int,
@@ -93,11 +107,9 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         currentState = State(productName, amount, warehousePlace, status,  price)
     }
 
-    fun getRequestById(id: Int): Flow<RequestDTO> = flow {
-
+    fun getRequestById(id: Int): Flow<RequestDTO> {
+        return repository.getRequestById(id)
     }
-
-
 
     fun getPriceBase(): String? {
         return priceBase

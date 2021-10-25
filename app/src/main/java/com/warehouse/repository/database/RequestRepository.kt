@@ -25,7 +25,13 @@ class RequestRepository (private val requestDao: RequestDao){
         return requestDao.getUserById(userID)
     }
 
+    fun getRequestById(requestID: Int): Flow<RequestDTO> {
+        return requestDao.getRequestById(requestID)
+    }
+
     fun getUsers() = requestDao.getUsers()
+
+    fun getRequests() = requestDao.getRequests()
 
     @WorkerThread
     suspend fun insertUser(user: UserDTO) {
@@ -50,5 +56,10 @@ class RequestRepository (private val requestDao: RequestDao){
     @WorkerThread
     suspend fun updateUser(user: UserDTO) {
         requestDao.updateUser(user)
+    }
+
+    @WorkerThread
+    suspend fun updateRequest(request: RequestDTO) {
+        requestDao.updateRequest(request)
     }
 }

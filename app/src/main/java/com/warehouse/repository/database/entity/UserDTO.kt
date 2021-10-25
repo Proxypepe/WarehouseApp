@@ -20,8 +20,7 @@ data class UserDTO(
     @NotNull @NonNull
     val email: String,
     @ColumnInfo(name = "password")
-    @NotNull @NonNull
-    val password: String,
+    val password: String?,
     @ColumnInfo(name = "role")
     @NotNull @NonNull
     val role: String,

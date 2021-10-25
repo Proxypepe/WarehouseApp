@@ -1,5 +1,6 @@
 package com.warehouse.presentation.activity
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.warehouse.domain.LoginViewModel
 import com.warehouse.domain.LoginViewModelFactory
 import com.warehouse.domain.SignupViewModel
@@ -19,6 +21,15 @@ import com.warehouse.domain.SignupViewModelFactory
 import com.warehouse.presentation.screens.LoginScreen
 import com.warehouse.presentation.screens.SighupScreen
 import com.warehouse.repository.RequestsApplication
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+
+import android.content.Intent
+import android.util.Log
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.common.api.ApiException
+import com.warehouse.repository.database.entity.UserDTO
+
 
 class SignUpInActivity : AppCompatActivity() {
 
@@ -30,11 +41,20 @@ class SignUpInActivity : AppCompatActivity() {
         LoginViewModelFactory((application as RequestsApplication).repository)
     }
 
+    private var RC_SIGN_IN = 0
+
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val fullUri = intent.data
         var start = "Login"
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+
+        val mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         setContent {
             val navController = rememberAnimatedNavController()
             fullUri?.let {
@@ -47,10 +67,39 @@ class SignUpInActivity : AppCompatActivity() {
                     } else {
                         null
                     }
-                }) { LoginScreen(navController, loginViewModel) }
+                }) { LoginScreen(navController, loginViewModel, mGoogleSignInClient, RC_SIGN_IN) }
                 composable("Signup") { SighupScreen(navController, signupViewModel) }
                 // add router for sharing
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            account?.let {
+                val user = UserDTO(fullname = it.displayName!!, email = it.email!!, password = null, role = "single_user")
+
+                loginViewModel.insertUser(user)
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    putExtra("email", user.email)
+                }
+                startActivity(intent)
+            }
+
+            Log.d("Yep", "Working")
+        } catch (e: ApiException) {
+            Log.w("", "signInResult:failed code=" + e.statusCode)
+        }
+    }
+
 }

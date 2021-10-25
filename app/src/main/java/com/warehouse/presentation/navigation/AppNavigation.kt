@@ -69,7 +69,7 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                 composable("details") {
                     navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")
                         ?.let {
-                            DetailScreen(request = it, navController)
+                            DetailScreen(request = it, navController, userData)
                         }
                 }// route detail
 
@@ -79,7 +79,7 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                     val arg = backStackEntry.arguments?.getString("id")
                     if ( arg != null)
                     {
-                        PriceChooseScreen(navController, requestViewModel, exchangeViewModel, Integer.parseInt(arg))
+                        ChangeFields(requestViewModel, Integer.parseInt(arg), navController)
                     }
                     else {
                         Text("Something went wrong")

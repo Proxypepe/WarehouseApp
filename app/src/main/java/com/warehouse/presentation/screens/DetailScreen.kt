@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import com.warehouse.repository.model.Request
 import com.warehouse.repository.model.toRequestDTO
 
@@ -57,7 +58,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
 }
 
 @Composable
-fun DetailScreen (request: Request, navController: NavController){
+fun DetailScreen (request: Request, navController: NavController, user: UserDTO){
     val context = LocalContext.current
     val req = toRequestDTO(request)
     Column (
@@ -96,6 +97,24 @@ fun DetailScreen (request: Request, navController: NavController){
                 Text(text = "Change currency")
             }
         }
+        if( user.role == "moderator" || user.role == "admin")
+        {
+            Spacer(modifier = Modifier.padding(top=10.dp))
+            Button(onClick =  {
+                navController.navigate("details/change/moder/${request.id}")
+            }, colors = ButtonDefaults.textButtonColors(
+                backgroundColor = Color.White),
+                modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
+
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = 8.dp),
+                    tint = Color(0xFFCC3333))
+                Spacer(modifier = Modifier.padding(top=10.dp))
+                Text(text = "Change Fields")
+            }
+        }
     }
 }
 
@@ -112,8 +131,8 @@ fun ErrorScreen() {
 @Composable
 fun DetailScreenPreview () {
     val navController = rememberNavController()
-    DetailScreen(Request(0, "Hello", 10, 2, "Android", null, null, null),
-        navController)
+    DetailScreen(Request(0, 0,"Hello", 10, 2, "Android", null, null, null),
+        navController, UserDTO(1, "","", "", "moderator"))
 }
 
 @Preview(showBackground = true)

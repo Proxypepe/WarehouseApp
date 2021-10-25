@@ -1,10 +1,14 @@
 package com.warehouse.domain
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.UserDTO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 
 class LoginViewModel(private val repository: RequestRepository?) : ViewModel() {
@@ -20,10 +24,21 @@ class LoginViewModel(private val repository: RequestRepository?) : ViewModel() {
         this.password   = password
     }
 
+    fun insertUser(user: UserDTO) {
+        val userDTO = repository?.getUserByEmail(user.email)
+        if (userDTO != null)
+        {
+            insert(user)
+        }
+    }
 
 
     fun getUserByEmail(email: String): Flow<UserDTO>? {
         return repository?.getUserByEmail(email)
+    }
+
+    private fun insert(user: UserDTO) = viewModelScope.launch{
+        repository?.insertUser(user)
     }
 
 }

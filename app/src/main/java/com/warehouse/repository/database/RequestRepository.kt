@@ -17,6 +17,10 @@ class RequestRepository (private val requestDao: RequestDao){
         return requestDao.getUserByEmail(email)
     }
 
+    fun getUserByEmailNullable(email: String): Flow<UserDTO?> {
+        return requestDao.getUserByEmailNullable(email)
+    }
+
     fun getRequestsByUserID(userID: Int): Flow<List<RequestDTO>> {
         return requestDao.getRequestsByUserID(userID)
     }

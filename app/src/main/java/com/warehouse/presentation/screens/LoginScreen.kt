@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -141,6 +142,16 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel, mG
         }
     }
 }
+
+@Composable
+fun RunProgress(loginViewModel: LoginViewModel) {
+    val loading = loginViewModel.loading.observeAsState()
+    Log.d("Loading", "Yes")
+    loading.value?.let { LoadProgress(it) }
+
+}
+
+
 
 private fun signIn(context: Context, mGoogleSignInClient: GoogleSignInClient, RC_SIGN_IN: Int) {
     val signInIntent: Intent = mGoogleSignInClient.signInIntent

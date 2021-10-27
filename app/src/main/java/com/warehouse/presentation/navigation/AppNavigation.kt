@@ -7,16 +7,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.asLiveData
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
 import com.warehouse.domain.AdminViewModel
 import com.warehouse.domain.ContactViewModel
 import com.warehouse.domain.ExchangeViewModel
@@ -30,7 +27,27 @@ import com.warehouse.repository.model.Request
 fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactViewModel,
                   exchangeViewModel: ExchangeViewModel, adminViewModel: AdminViewModel) {
     Surface(color = MaterialTheme.colors.background) {
-        val userData: UserDTO by requestViewModel.userData!!.observeAsState(initial = UserDTO(1, "Hell ye", "gsdgf", "", "single_user"))
+        val userData: UserDTO = if(requestViewModel.userData != null) {
+            val userData1: UserDTO by requestViewModel.userData!!.observeAsState(
+                initial = UserDTO(
+                    1,
+                    "",
+                    "",
+                    "",
+                    "single_user"
+                )
+            )
+            userData1
+        }else {
+            UserDTO(
+                1,
+                "",
+                "",
+                "",
+                "single_user"
+            )
+        }
+
 
         val bottomItems = if (requestViewModel.userId != null && userData.role == "admin") {
             listOf("Requests", "Make request", "Admin panel")
@@ -41,8 +58,6 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
         val navController = rememberNavController()
         val uriPat = "www.warehouse_app.com"
         val context = LocalContext.current
-//        val loading = exchangeViewModel.loading.observeAsState()
-//        val price_ = exchangeViewModel.price.observeAsState()
         Scaffold(
             bottomBar = {
                 BottomNavigation {
@@ -58,7 +73,6 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                 composable("Requests") {
                     Box(modifier = Modifier.padding(innerPadding))
                     {
-//                        loading.value?.let { it1 -> LoadProgress(it1) }
                         StartCardViewList(navController, requestViewModel) }
                 }
 

@@ -28,9 +28,12 @@ import com.warehouse.repository.model.toRequest
 
 @Composable
 fun StartCardViewList(navController: NavController, requestViewModel: RequestViewModel) {
-    val list: List<RequestDTO> by requestViewModel.allRequests!!.observeAsState(initial = emptyList())
-    Log.d("Request list", list.toString())
-    CardViewList(list, navController)
+    if (requestViewModel.allRequests != null)
+    {
+        val list: List<RequestDTO> by requestViewModel.allRequests!!.observeAsState(initial = emptyList())
+        Log.d("Request list", list.toString())
+        CardViewList(list, navController)
+    }
 }
 
 @Composable
@@ -52,7 +55,8 @@ fun CardView(request: RequestDTO, navController: NavController? = null) {
         }
     ){
         Column(
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .padding(10.dp)
         ) {
             Row {
@@ -106,6 +110,7 @@ fun NavController?.navigate(route: String, params: Bundle?, builder: NavOptionsB
 
     this?.navigate(route, builder)
 }
+
 
 @Preview(showBackground = true)
 @Composable

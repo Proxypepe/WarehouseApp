@@ -1,5 +1,7 @@
 package com.warehouse.presentation.screens
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,14 +15,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.warehouse.domain.SignupViewModel
+import com.warehouse.presentation.activity.MainActivity
+import com.warehouse.presentation.activity.SignUpInActivity
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserDTO
 
@@ -32,6 +38,7 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
     val password = remember { mutableStateOf(TextFieldValue()) }
     val confirmPassword = remember { mutableStateOf(TextFieldValue()) }
 
+    val context = LocalContext.current
 
     Box( contentAlignment = Alignment.Center, modifier = Modifier
         .padding(top = 100.dp, start = 50.dp,
@@ -84,7 +91,8 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
                 shape = RoundedCornerShape(8.dp)
             )
 
-            Button( onClick = { createAcc(fullName.value.text, email.value.text, password.value.text, signupViewModel) },
+            Button( onClick = { createAcc(fullName.value.text, email.value.text, password.value.text,
+                signupViewModel, context) },
                 modifier = Modifier.align(Alignment.End)) { Text("SIGN UP")}
             Spacer(modifier = Modifier.padding(top = 150.dp))
             Row(modifier = Modifier.fillMaxWidth(),
@@ -100,10 +108,14 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
     }
 }
 
-fun createAcc(fullName: String, email: String, password: String, signupViewModel: SignupViewModel){
+fun createAcc(fullName: String, email: String, password: String, signupViewModel: SignupViewModel, context: Context){
     val user = UserDTO(fullname = fullName, email = email, password = password, role = "single_user")
-
     signupViewModel.insert(user)
+
+    val intent = Intent(context as SignUpInActivity, MainActivity::class.java).apply {
+        putExtra("email", user.email)
+    }
+    context.startActivity(intent)
 }
 
 

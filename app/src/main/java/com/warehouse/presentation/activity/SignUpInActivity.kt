@@ -28,7 +28,10 @@ import android.content.Intent
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.common.api.ApiException
+import com.warehouse.presentation.screens.LoadProgress
+import com.warehouse.presentation.screens.RunProgress
 import com.warehouse.repository.database.entity.UserDTO
+import java.lang.Thread.sleep
 
 
 class SignUpInActivity : AppCompatActivity() {
@@ -86,10 +89,13 @@ class SignUpInActivity : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
+            setContent{
+                RunProgress(loginViewModel)
+            }
             account?.let {
                 val user = UserDTO(fullname = it.displayName!!, email = it.email!!, password = null, role = "single_user")
-
                 loginViewModel.insertUser(user)
+                sleep(2000)
                 val intent = Intent(this, MainActivity::class.java).apply {
                     putExtra("email", user.email)
                 }

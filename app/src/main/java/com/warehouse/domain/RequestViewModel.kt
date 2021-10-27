@@ -13,6 +13,8 @@ import com.warehouse.repository.model.Price
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import java.lang.Thread.sleep
 
 
 data class State(val productName: String, val amount: String, val warehousePlace: String,
@@ -60,11 +62,14 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         return repository.getRequestsByUserID(userID)
     }
 
-    fun setUserId(email: String): LiveData<UserDTO> {
-
-        return repository.getUserByEmail(email).asLiveData()
-
-    }
+   fun initUser(email: String) = viewModelScope.launch {
+       val userFlow = repository.getUserByEmailNullable(email)
+       userFlow.collect { user ->
+           if (user != null) {
+               setUserId(user.userID, user.role)
+           }
+       }
+   }
 
 
     fun setUserId(userID: Int, role: String) {
@@ -149,7 +154,6 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         currentState = null
     }
 }
-
 class RequestViewModelFactory(private val repository: RequestRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RequestViewModel::class.java)) {

@@ -17,6 +17,9 @@ abstract class RequestDao {
     @Query("SELECT * FROM User WHERE email = :email")
     abstract fun getUserByEmail(email: String) : Flow<UserDTO>
 
+    @Query("SELECT * FROM User WHERE email = :email")
+    abstract fun getUserByEmailNullable(email: String) : Flow<UserDTO?>
+
     @Transaction
     @Query("SELECT * FROM Request WHERE userID = :userID")
     abstract fun getRequestsByUserID(userID: Int) : Flow<List<RequestDTO>>

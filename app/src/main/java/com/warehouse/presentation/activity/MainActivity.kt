@@ -53,18 +53,10 @@ class MainActivity : ComponentActivity() {
             requestViewModel.setUserId(userId, role)
             Log.d("Without email", "Not email log")
         } else {
-            val user = requestViewModel.setUserId(email)
-            user.observe(this, {
-                it?.let{
-                    requestViewModel.setUserId(it.userID, it.role)
-                }
-            })
+            requestViewModel.initUser(email)
             Log.d("Email", "Email log")
         }
-
         sleep(3000)
-
-
     }
 
     @ExperimentalAnimationApi
@@ -72,14 +64,12 @@ class MainActivity : ComponentActivity() {
         super.onStart()
 
         setContent {
-            setContent {
-                AppNavigation(
-                    requestViewModel = requestViewModel,
-                    contactViewModel = contactViewModel,
-                    exchangeViewModel = exchangeViewModel,
-                    adminViewModel = adminViewModel
-                )
-            }
+            AppNavigation(
+                requestViewModel = requestViewModel,
+                contactViewModel = contactViewModel,
+                exchangeViewModel = exchangeViewModel,
+                adminViewModel = adminViewModel
+            )
         }
     }
 }

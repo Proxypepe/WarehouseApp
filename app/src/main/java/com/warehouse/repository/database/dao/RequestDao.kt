@@ -1,26 +1,75 @@
 package com.warehouse.repository.database.dao
 import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.database.entity.UserAndRequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface RequestDao {
+abstract class RequestDao {
 
-    @Query("SELECT * FROM request")
-    fun getRequests(): Flow<List<RequestDTO>>
+    @Transaction
+    @Query("SELECT * FROM User WHERE fullname = :fullName")
+    abstract fun getDataByFullName(fullName: String) : Flow<UserDTO>
 
-    @Query("SELECT * FROM request WHERE id = :id")
-    fun getRequestById(id: Int): Flow<RequestDTO>
+    @Transaction
+    @Query("SELECT * FROM User WHERE email = :email")
+    abstract fun getUserByEmail(email: String) : Flow<UserDTO>
+
+    @Query("SELECT * FROM User WHERE email = :email")
+    abstract fun getUserByEmailNullable(email: String) : Flow<UserDTO?>
+
+    @Transaction
+    @Query("SELECT * FROM Request WHERE userID = :userID")
+    abstract fun getRequestsByUserID(userID: Int) : Flow<List<RequestDTO>>
+
+    @Transaction
+    @Query("SELECT * FROM User WHERE userID = :userID")
+    abstract fun getUserById(userID: Int) : Flow<UserDTO>
+
+    @Query("SELECT * FROM Request WHERE requestID = :requestID")
+    abstract fun getRequestById(requestID: Int) : Flow<RequestDTO>
+
+    @Transaction
+    @Query("SELECT * FROM User")
+    abstract fun getUsers() : Flow<List<UserDTO>>
+
+    @Transaction
+    @Query("SELECT * FROM Request")
+    abstract fun getRequests() : Flow<List<RequestDTO>>
+
+    @Insert(onConflict = REPLACE)
+    abstract suspend fun insertUser(user: UserDTO)
 
     @Insert
-    suspend fun insert(request: RequestDTO)
+    abstract suspend fun insertRequest(request: RequestDTO)
+
+    @Insert
+    abstract suspend fun insertRequests(requests: List<RequestDTO>)
+
+    @Insert
+    @Transaction
+    suspend fun insertUserAndRequest(user: UserDTO, requests: List<RequestDTO>) {
+        insertUser(user)
+        val index = user.userID
+
+        requests.forEach { it.userID = index}
+        insertRequests(requests)
+    }
+
+    @Insert
+    @Transaction
+    suspend fun insertRequests(user: UserDTO, requests: List<RequestDTO>) {
+        val index = user.userID
+
+        requests.forEach { it.userID = index}
+        insertRequests(requests)
+    }
 
     @Update
-    suspend fun update(request: RequestDTO)
-    
-    @Query("DELETE FROM request")
-    suspend fun deleteAll()
+    abstract suspend fun updateUser(user: UserDTO)
 
-    @Delete
-    suspend fun delete(request: RequestDTO)
+    @Update
+    abstract suspend fun updateRequest(request: RequestDTO)
 }

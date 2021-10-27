@@ -29,13 +29,14 @@ import androidx.navigation.compose.rememberNavController
 
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import com.warehouse.repository.model.Request
 import com.warehouse.repository.model.toRequestDTO
 
 
 @Composable
 fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
-    val requests by  requestViewModel.allRequests.observeAsState()
+    val requests by  requestViewModel.allRequests!!.observeAsState()
     val requestsSize  = requests?.size
 
     if (id != null &&  requestsSize != null) {
@@ -45,7 +46,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
             val requestFromBD = requestViewModel.getRequestById(id)
             val liveData = requestFromBD.asLiveData()
             val requestDTO: RequestDTO by liveData.observeAsState(
-                RequestDTO(0, "", 0, 0,"", null, null, null))
+                RequestDTO(0, 0, "", 0, 0,"", null, null, null))
             Box(modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center) {
                 CardView(requestDTO, null)
@@ -57,7 +58,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
 }
 
 @Composable
-fun DetailScreen (request: Request, navController: NavController){
+fun DetailScreen (request: Request, navController: NavController, user: UserDTO){
     val context = LocalContext.current
     val req = toRequestDTO(request)
     Column (
@@ -69,16 +70,19 @@ fun DetailScreen (request: Request, navController: NavController){
         CardView(req)
         Spacer(modifier = Modifier.padding(top=10.dp))
         Row {
-            Button(onClick = { getShareIntend(context, request.id)},
-                colors = ButtonDefaults.textButtonColors(
-                    backgroundColor = Color.White),
-                modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
-                Icon(
-                    imageVector = Icons.Filled.Share,
-                    contentDescription = "Localized description",
-                    modifier = Modifier.padding(end = 8.dp),
-                    tint = Color(0xFFCC3333))
-                Text(text = "Share me")
+            if( user.role == "single_user")
+            {
+                Button(onClick = { getShareIntend(context, request.id)},
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.White),
+                    modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
+                    Icon(
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = "Localized description",
+                        modifier = Modifier.padding(end = 8.dp),
+                        tint = Color(0xFFCC3333))
+                    Text(text = "Share me")
+                }
             }
             Spacer(modifier = Modifier.padding(5.dp))
             Button(onClick =  {
@@ -94,6 +98,24 @@ fun DetailScreen (request: Request, navController: NavController){
                     tint = Color(0xFFCC3333))
                 Spacer(modifier = Modifier.padding(top=10.dp))
                 Text(text = "Change currency")
+            }
+        }
+        if( user.role == "moderator" || user.role == "admin")
+        {
+            Spacer(modifier = Modifier.padding(top=10.dp))
+            Button(onClick =  {
+                navController.navigate("details/change/moder/${request.id}")
+            }, colors = ButtonDefaults.textButtonColors(
+                backgroundColor = Color.White),
+                modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
+
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = 8.dp),
+                    tint = Color(0xFFCC3333))
+                Spacer(modifier = Modifier.padding(top=10.dp))
+                Text(text = "Change Fields")
             }
         }
     }
@@ -112,8 +134,8 @@ fun ErrorScreen() {
 @Composable
 fun DetailScreenPreview () {
     val navController = rememberNavController()
-    DetailScreen(Request(0, "Hello", 10, 2, "Android", null, null, null),
-        navController)
+    DetailScreen(Request(0, 0,"Hello", 10, 2, "Android", null, null, null),
+        navController, UserDTO(1, "","", "", "moderator"))
 }
 
 @Preview(showBackground = true)

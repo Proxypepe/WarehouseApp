@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.warehouse.repository.database.dao.RequestDao
 import com.warehouse.repository.database.entity.RequestDTO
+import com.warehouse.repository.database.entity.UserDTO
 import com.warehouse.utils.DateConverter
 
 
-@Database(entities = [RequestDTO::class], version = 1)
+@Database(entities = [RequestDTO::class, UserDTO::class], version = 1)
 @TypeConverters(DateConverter::class)
 abstract class  RequestRoomDatabase : RoomDatabase() {
     abstract fun requestDao(): RequestDao
@@ -27,7 +28,7 @@ abstract class  RequestRoomDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     RequestRoomDatabase::class.java,
-                    "request"
+                    "User"
                 ).build()
 
                 INSTANCE = instance

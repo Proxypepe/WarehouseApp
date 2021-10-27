@@ -38,7 +38,7 @@ fun LoadingScreen(requestViewModel: RequestViewModel, exchangeViewModel: Exchang
     val price = exchangeViewModel.price.observeAsState()
     val requestDto = requestViewModel.getRequestById(id).asLiveData()
     val requestDTO: RequestDTO by requestDto.observeAsState(
-        RequestDTO(0, "", 0, 0,"", null, null, null)
+        RequestDTO(0, 0, "", 0, 0,"", null, null, null)
     )
 //    Log.d("DD", "req $requestDTO")
     Box(

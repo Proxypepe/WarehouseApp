@@ -70,16 +70,19 @@ fun DetailScreen (request: Request, navController: NavController, user: UserDTO)
         CardView(req)
         Spacer(modifier = Modifier.padding(top=10.dp))
         Row {
-            Button(onClick = { getShareIntend(context, request.id)},
-                colors = ButtonDefaults.textButtonColors(
-                    backgroundColor = Color.White),
-                modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
-                Icon(
-                    imageVector = Icons.Filled.Share,
-                    contentDescription = "Localized description",
-                    modifier = Modifier.padding(end = 8.dp),
-                    tint = Color(0xFFCC3333))
-                Text(text = "Share me")
+            if( user.role == "single_user")
+            {
+                Button(onClick = { getShareIntend(context, request.id)},
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.White),
+                    modifier = Modifier.border(BorderStroke(0.dp, Color.White))) {
+                    Icon(
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = "Localized description",
+                        modifier = Modifier.padding(end = 8.dp),
+                        tint = Color(0xFFCC3333))
+                    Text(text = "Share me")
+                }
             }
             Spacer(modifier = Modifier.padding(5.dp))
             Button(onClick =  {

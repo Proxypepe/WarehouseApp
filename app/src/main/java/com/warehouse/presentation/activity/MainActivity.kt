@@ -16,13 +16,19 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 import com.warehouse.domain.*
 
 import com.warehouse.presentation.navigation.AppNavigation
 import com.warehouse.presentation.screens.*
 import com.warehouse.repository.RequestsApplication
+import com.warehouse.repository.database.entity.UserDTO
+import com.warehouse.repository.model.ExchangeItem
+import com.warehouse.repository.remote.api.UserApi
+import com.warehouse.repository.remote.repository.UserRepository
 import java.lang.Thread.sleep
 
 
@@ -32,7 +38,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private val adminViewModel: AdminViewModel by viewModels {
-        AdminViewModelFactory((application as RequestsApplication).repository)
+        AdminViewModelFactory((application as RequestsApplication).repository,
+            (application as RequestsApplication).userRepository)
     }
 
     private val exchangeViewModel: ExchangeViewModel by viewModels {
@@ -44,6 +51,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val intent = intent
         val userId = intent.getIntExtra("User_Id", 0)
         val role = intent.getStringExtra("role") ?: "single_user"

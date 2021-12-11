@@ -50,7 +50,7 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
 
 
         val bottomItems = if (requestViewModel.userId != null && userData.role == "admin") {
-            listOf("Requests", "Make request", "Admin panel")
+            listOf("Requests", "Make request",  "Admin panel")
         } else {
             listOf("Requests", "Make request")
         }

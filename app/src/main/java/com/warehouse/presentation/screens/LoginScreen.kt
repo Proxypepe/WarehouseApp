@@ -88,6 +88,7 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel, mG
             Button( onClick = {
                 var user: UserDTO? = null
                 var access: Boolean = false
+                loginViewModel.setFullState(login.value.text, password.value.text)
                 loginViewModel.getUserByEmail(login.value.text)?.asLiveData()?.observe(context as (SignUpInActivity), {
                     if ( it != null){
                         if (it.email == login.value.text && it.password == password.value.text)
@@ -146,16 +147,13 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel, mG
 @Composable
 fun RunProgress(loginViewModel: LoginViewModel) {
     val loading = loginViewModel.loading.observeAsState()
-    Log.d("Loading", "Yes")
     loading.value?.let { LoadProgress(it) }
-
 }
 
 
 
 private fun signIn(context: Context, mGoogleSignInClient: GoogleSignInClient, RC_SIGN_IN: Int) {
     val signInIntent: Intent = mGoogleSignInClient.signInIntent
-    Log.d("Before", "Hereer")
     (context as SignUpInActivity).startActivityForResult(signInIntent, RC_SIGN_IN)
 }
 
@@ -165,7 +163,7 @@ private fun signIn(context: Context, mGoogleSignInClient: GoogleSignInClient, RC
 @Composable
 fun LoginScreenPreview() {
     val navController = rememberNavController()
-    val loginViewModel = LoginViewModel(null)
+    val loginViewModel = LoginViewModel(null, null)
 
     LoginScreen(navController, loginViewModel, null, 0)
 }

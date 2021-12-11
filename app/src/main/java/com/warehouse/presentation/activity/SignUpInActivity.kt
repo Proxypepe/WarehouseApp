@@ -32,16 +32,19 @@ import com.warehouse.presentation.screens.LoadProgress
 import com.warehouse.presentation.screens.RunProgress
 import com.warehouse.repository.database.entity.UserDTO
 import java.lang.Thread.sleep
+import kotlin.math.log
 
 
 class SignUpInActivity : AppCompatActivity() {
 
     private val signupViewModel: SignupViewModel by viewModels {
-        SignupViewModelFactory((application as RequestsApplication).repository)
+        SignupViewModelFactory((application as RequestsApplication).repository,
+                                (application as RequestsApplication).registerRepository)
     }
 
     private val loginViewModel: LoginViewModel by viewModels {
-        LoginViewModelFactory((application as RequestsApplication).repository)
+        LoginViewModelFactory((application as RequestsApplication).repository,
+            (application as RequestsApplication).authRepository)
     }
 
     private var RC_SIGN_IN = 0

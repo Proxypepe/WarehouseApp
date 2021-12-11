@@ -1,16 +1,12 @@
 package com.warehouse.repository.remote
 
-import com.warehouse.repository.remote.api.ExchangeApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitFactory {
-
-    private lateinit var exchangeApi: ExchangeApi
-
-    private fun configureRetrofit() {
+    inline fun <reified T> getInstance(baseUrl: String): T {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
@@ -19,16 +15,12 @@ class RetrofitFactory {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.frankfurter.app")
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        exchangeApi = retrofit.create(ExchangeApi::class.java)
+        return retrofit.create(T::class.java)
     }
 
-    fun getExchangeApi(): ExchangeApi {
-        configureRetrofit()
-        return exchangeApi
-    }
 }

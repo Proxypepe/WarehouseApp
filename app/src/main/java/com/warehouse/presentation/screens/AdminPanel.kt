@@ -78,7 +78,7 @@ fun UserCard(adminViewModel: AdminViewModel?, userData: UserDTO) {
                             if (newRole.value.text == "admin" || newRole.value.text == "moderator" || newRole.value.text == "single_user")
                             {
                                 adminViewModel?.updateUser(userData, newRole.value.text)
-
+                                adminViewModel?.getAllUsers()
                             } else {
                                 Toast.makeText(context, "Invalid role", Toast.LENGTH_LONG).show()
                             }

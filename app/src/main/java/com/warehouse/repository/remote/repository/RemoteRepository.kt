@@ -1,4 +1,4 @@
-package com.warehouse.repository.remote
+package com.warehouse.repository.remote.repository
 
 import com.warehouse.repository.model.ExchangeItem
 import com.warehouse.repository.model.Price

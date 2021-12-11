@@ -1,5 +1,6 @@
 package com.warehouse.domain
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,6 +11,9 @@ import com.warehouse.repository.database.entity.UserDTO
 import com.warehouse.repository.model.User
 import com.warehouse.repository.remote.repository.RegisterRepository
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SignupViewModel(private val repository: RequestRepository?, private val remoteRepository: RegisterRepository): ViewModel(){
 
@@ -20,7 +24,7 @@ class SignupViewModel(private val repository: RequestRepository?, private val re
 
 
     fun setFullState(fullName: String, email: String,
-                        password: String, confirmedPassword: String){
+                        password: String, confirmedPassword: String, ){
         this.fullName           = fullName
         this.email              = email
         this.password           = password
@@ -36,9 +40,27 @@ class SignupViewModel(private val repository: RequestRepository?, private val re
         repository?.insert(user, requests)
     }
 
-    fun createUser() {
+    fun createUser(context: Context) {
         val user = User(fullName, email, password, "single_user")
-        remoteRepository.createUser(user)
+        remoteRepository.createUser(user).enqueue(object : Callback<UserDTO>{
+            override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
+                if (response.isSuccessful && response.code() == 200 && response.body() != null)
+                {
+                    println(response.body())
+                    //start new activity
+
+                } else {
+                    Log.e("Post create user", "${response.code()}")
+                }
+
+            }
+
+            override fun onFailure(call: Call<UserDTO>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+
+        })
         Log.d("Create user", "Sent")
     }
 

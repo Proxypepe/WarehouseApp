@@ -111,13 +111,13 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel?
 
 fun createAcc(fullName: String, email: String, password: String, signupViewModel: SignupViewModel, context: Context){
     val user = UserDTO(fullname = fullName, email = email, password = password, role = "single_user")
-    signupViewModel.insert(user)
-    signupViewModel.createUser()
+    signupViewModel.setFullState(fullName, email, password,  password)
+    signupViewModel.createUser(context)
 
-//    val intent = Intent(context as SignUpInActivity, MainActivity::class.java).apply {
-//        putExtra("email", user.email)
 //    }
 //    context.startActivity(intent)
+//    val intent = Intent(context as SignUpInActivity, MainActivity::class.java).apply {
+//        putExtra("email", user.email)
 }
 
 

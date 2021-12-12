@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.warehouse.domain.RequestViewModel
 import com.warehouse.presentation.theme.ComposeTestTheme
+import com.warehouse.repository.model.Price
 import java.util.*
 
 
@@ -101,17 +102,14 @@ fun MakeRequestScreen(navController: NavController, requestViewModel: RequestVie
             if (productName.value.text.isNotEmpty() && amount.value.text.isNotEmpty() &&
                 warehousePlace.value.text.isNotEmpty() &&  status.value.text.isNotEmpty()
                 && priceValue.value.text.isNotEmpty()) {
-                if (requestViewModel != null) {
-                    makeRequest(
-                        requestViewModel,
-                        productName.value.text,
-                        Integer.parseInt(amount.value.text),
-                        Integer.parseInt(warehousePlace.value.text),
-                        status.value.text,
-                        null,
-                        priceValue.value.text
-                    )
-                }
+                requestViewModel?.makeRequest(
+                    productName.value.text,
+                    Integer.parseInt(amount.value.text),
+                    Integer.parseInt(warehousePlace.value.text),
+                    status.value.text,
+                    null,
+                    priceValue.value.text.toDouble()
+                )
                 navController.navigate("Requests")
             } else {
                 Toast.makeText( context,
@@ -164,10 +162,5 @@ fun MakeRequestScreenPreview() {
     }
 }
 
-fun makeRequest(requestViewModel: RequestViewModel, productName: String, amount: Int, warehousePlace:Int,
-                status: String, date: Date?, price: String) {
-    requestViewModel.setRequest(productName, amount, warehousePlace, status, date, price)
-    requestViewModel.writeRequest()
-    requestViewModel.clear()
-}
+
 

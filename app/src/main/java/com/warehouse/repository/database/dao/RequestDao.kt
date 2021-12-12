@@ -5,6 +5,10 @@ import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserAndRequestDTO
 import com.warehouse.repository.database.entity.UserDTO
 import kotlinx.coroutines.flow.Flow
+import androidx.room.Dao
+
+
+
 
 @Dao
 abstract class RequestDao {
@@ -72,4 +76,7 @@ abstract class RequestDao {
 
     @Update
     abstract suspend fun updateRequest(request: RequestDTO)
+
+    @Query("DELETE FROM Request")
+    abstract fun clearRequestTable()
 }

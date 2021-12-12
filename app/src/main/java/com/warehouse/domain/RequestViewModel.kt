@@ -8,23 +8,31 @@ import com.warehouse.presentation.activity.MainActivity
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserDTO
-import com.warehouse.repository.model.Contact
-import com.warehouse.repository.model.Price
+import com.warehouse.repository.model.*
+import com.warehouse.repository.remote.repository.RemoteRequestRepository
+import com.warehouse.repository.remote.repository.UserRepository
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.lang.Thread.sleep
 
 
 data class State(val productName: String, val amount: String, val warehousePlace: String,
                  val status: String, val price_value: String)
 
-class RequestViewModel(private val repository: RequestRepository): ViewModel() {
+class RequestViewModel(private val repository: RequestRepository,
+                       private val requestRepository: RemoteRequestRepository,
+                        private val userRepository: UserRepository
+): ViewModel() {
     var userId: Int? = null
-
+    var role: String? = null
     var userData: LiveData<UserDTO>? = null
     var allRequests: LiveData<List<RequestDTO>>? = null
+    var allRequestsCache: LiveData<List<RequestDTO>>? = null
 
     private var productName: String?    = null
     private var amount: Int?            = null
@@ -38,6 +46,8 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     private var request: RequestDTO?    = null
 
 
+    var gotFromRemote                   = false
+
     private fun initRequest(productName: String, amount: Int, warehousePlace: Int,
                             status: String, arrivalDate: Date?, contact: Contact?, price: Price?){
         request = userId?.let {
@@ -46,8 +56,6 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
             )
         }
     }
-
-
 
     private fun insert(request: RequestDTO) = viewModelScope.launch {
         repository.insert(request)
@@ -58,31 +66,14 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
     }
 
 
-    private fun getRequestsByUserID(userID: Int): Flow<List<RequestDTO>> {
-        return repository.getRequestsByUserID(userID)
-    }
-
-   fun initUser(email: String) = viewModelScope.launch {
-       val userFlow = repository.getUserByEmailNullable(email)
-       userFlow.collect { user ->
-           if (user != null) {
-               setUserId(user.userID, user.role)
-           }
-       }
-   }
-
-
-    fun setUserId(userID: Int, role: String) {
-        this.userId = userID
-        allRequests = if (role == "admin" || role == "moderator")
+    private fun setUpCache(){
+        if (role == "admin" || role == "moderator")
         {
-            repository.getRequests().asLiveData()
+            allRequestsCache = repository.getRequests().asLiveData()
         } else
         {
-            repository.getRequestsByUserID(userID).asLiveData()
+            userId?.let { allRequestsCache = repository.getRequestsByUserID(it).asLiveData() }
         }
-        this.userData = repository.getUserById(userID).asLiveData()
-        Log.d("Set user", "Set")
     }
 
     fun setRequest(productName: String, amount: Int, warehousePlace: Int,
@@ -99,6 +90,66 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
             contact, Price(p, b))
     }
 
+    fun getRequestsByUserId(userId: Int){
+        this.userId = userId
+        gotFromRemote = true
+        setUpCache()
+        requestRepository.getRequestsByUserID(userId).enqueue(object: Callback<List<RequestDTO>>{
+            override fun onResponse(call: Call<List<RequestDTO>>,
+                                    response: Response<List<RequestDTO>>
+            ) {
+                if (response.isSuccessful && response.body() != null && response.code() == 200)
+                {
+                    Log.d("Request List", "${response.body()}")
+                    allRequests = MutableLiveData(response.body())
+                } else {
+                    allRequests = allRequestsCache
+                }
+            }
+
+            override fun onFailure(call: Call<List<RequestDTO>>, t: Throwable) {
+                allRequests = allRequestsCache
+            }
+        })
+    }
+
+    fun makeRequest(productName: String, amount: Int, warehousePlace: Int,
+                    status: String, arrivalDate: Date?, price: Double) {
+            val newReq = userId?.let {
+                val priceTmp = Price(price, priceBase?: "USD")
+                RequestModel(
+                    it, productName, amount, warehousePlace, status,
+                    contact, priceTmp)
+            }
+        if (newReq != null) {
+            requestRepository.addNewRequest(newReq ).enqueue(object: Callback<RequestResponseModel>{
+                override fun onResponse(call: Call<RequestResponseModel>, response: Response<RequestResponseModel>) {
+                    if(response.isSuccessful && response.code() == 200 && response.body() != null)
+                    {
+                        val answer = response.body()!!
+                        println(response.body())
+                        cacheRequest(answer.requestID, answer.productName, answer.amount,
+                            answer.warehousePlace, answer.status, null, answer.price?:
+                            Price(0.0, "RUB"))
+                        allRequests = allRequestsCache
+                    }
+                }
+
+                override fun onFailure(call: Call<RequestResponseModel>, t: Throwable) {
+                    cacheRequest(0, productName, amount,
+                        warehousePlace, status, null,
+                        Price(price, priceBase?: "RUB"))
+                }
+            })
+        }
+    }
+    private fun cacheRequest(requestId: Int = 0,productName: String, amount: Int, warehousePlace:Int,
+                status: String, date: Date?, price: Price) {
+        request = userId?.let { RequestDTO(requestId, it, productName, amount, warehousePlace,
+            status, date,contact, price) }
+        writeRequest()
+        clear()
+    }
     fun writeRequest(){
         this.request?.let { insert(it) }
         contact = null
@@ -154,11 +205,13 @@ class RequestViewModel(private val repository: RequestRepository): ViewModel() {
         currentState = null
     }
 }
-class RequestViewModelFactory(private val repository: RequestRepository) : ViewModelProvider.Factory {
+class RequestViewModelFactory(private val repository: RequestRepository,
+                              private val remoteRepository: RemoteRequestRepository,
+                              private val userRepository: UserRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RequestViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return RequestViewModel(repository) as T
+            return RequestViewModel(repository, remoteRepository, userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

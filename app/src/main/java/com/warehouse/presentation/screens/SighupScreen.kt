@@ -29,9 +29,10 @@ import com.warehouse.presentation.activity.MainActivity
 import com.warehouse.presentation.activity.SignUpInActivity
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserDTO
+import com.warehouse.repository.remote.repository.RegisterRepository
 
 @Composable
-fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel) {
+fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel?) {
 
     val fullName = remember { mutableStateOf(TextFieldValue()) }
     val email = remember { mutableStateOf(TextFieldValue()) }
@@ -92,7 +93,7 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
             )
 
             Button( onClick = { createAcc(fullName.value.text, email.value.text, password.value.text,
-                signupViewModel, context) },
+                signupViewModel!!, context) },
                 modifier = Modifier.align(Alignment.End)) { Text("SIGN UP")}
             Spacer(modifier = Modifier.padding(top = 150.dp))
             Row(modifier = Modifier.fillMaxWidth(),
@@ -110,12 +111,13 @@ fun SighupScreen(navController: NavController, signupViewModel: SignupViewModel)
 
 fun createAcc(fullName: String, email: String, password: String, signupViewModel: SignupViewModel, context: Context){
     val user = UserDTO(fullname = fullName, email = email, password = password, role = "single_user")
-    signupViewModel.insert(user)
+    signupViewModel.setFullState(fullName, email, password,  password)
+    signupViewModel.createUser(context)
 
-    val intent = Intent(context as SignUpInActivity, MainActivity::class.java).apply {
-        putExtra("email", user.email)
-    }
-    context.startActivity(intent)
+//    }
+//    context.startActivity(intent)
+//    val intent = Intent(context as SignUpInActivity, MainActivity::class.java).apply {
+//        putExtra("email", user.email)
 }
 
 
@@ -123,6 +125,6 @@ fun createAcc(fullName: String, email: String, password: String, signupViewModel
 @Composable
 fun SighupScreenPreview() {
     val navController = rememberNavController()
-    val signupViewModel = SignupViewModel(null)
-    SighupScreen(navController, signupViewModel)
+//    val signupViewModel = SignupViewModel(null, null)
+    SighupScreen(navController, null)
 }

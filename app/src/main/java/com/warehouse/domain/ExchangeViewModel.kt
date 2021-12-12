@@ -1,11 +1,9 @@
 package com.warehouse.domain
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.warehouse.repository.model.ExchangeItem
 import com.warehouse.repository.model.Price
-import com.warehouse.repository.remote.RemoteRepository
-import kotlinx.coroutines.launch
+import com.warehouse.repository.remote.repository.RemoteRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -27,30 +27,9 @@ import com.warehouse.repository.model.Request
 fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactViewModel,
                   exchangeViewModel: ExchangeViewModel, adminViewModel: AdminViewModel) {
     Surface(color = MaterialTheme.colors.background) {
-        val userData: UserDTO = if(requestViewModel.userData != null) {
-            val userData1: UserDTO by requestViewModel.userData!!.observeAsState(
-                initial = UserDTO(
-                    1,
-                    "",
-                    "",
-                    "",
-                    "single_user"
-                )
-            )
-            userData1
-        }else {
-            UserDTO(
-                1,
-                "",
-                "",
-                "",
-                "single_user"
-            )
-        }
 
-
-        val bottomItems = if (requestViewModel.userId != null && userData.role == "admin") {
-            listOf("Requests", "Make request", "Admin panel")
+        val bottomItems = if (requestViewModel.userId != null && requestViewModel.role == "admin") {
+            listOf("Requests", "Make request",  "Admin panel")
         } else {
             listOf("Requests", "Make request")
         }
@@ -83,7 +62,11 @@ fun AppNavigation(requestViewModel: RequestViewModel, contactViewModel: ContactV
                 composable("details") {
                     navController.previousBackStackEntry?.arguments?.getParcelable<Request>("REQUEST")
                         ?.let {
-                            DetailScreen(request = it, navController, userData)
+                            requestViewModel.role?.let { it1 ->
+                                DetailScreen(request = it, navController,
+                                    it1
+                                )
+                            }
                         }
                 }// route detail
 

@@ -2,8 +2,6 @@ package com.warehouse.presentation.screens
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,9 +23,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.warehouse.R
@@ -35,7 +30,6 @@ import com.warehouse.domain.LoginViewModel
 import com.warehouse.presentation.activity.MainActivity
 import com.warehouse.presentation.activity.SignUpInActivity
 import com.warehouse.repository.database.entity.UserDTO
-import androidx.core.app.ActivityCompat.startActivityForResult
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 
@@ -88,30 +82,8 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel, mG
             Button( onClick = {
                 var user: UserDTO? = null
                 var access: Boolean = false
-                loginViewModel.getUserByEmail(login.value.text)?.asLiveData()?.observe(context as (SignUpInActivity), {
-                    if ( it != null){
-                        if (it.email == login.value.text && it.password == password.value.text)
-                        {
-                            user = it
-                            access = true
-                        } else {
-                            user = null
-                            access = false
-                            Toast.makeText(context, "Uncorrect Email or password", Toast.LENGTH_LONG).show()
-                        }
-                    } else {
-                        Toast.makeText(context, "Uncorrect Email or password", Toast.LENGTH_LONG).show()
-                    }
-                    if (access)
-                    {
-                        val intent = Intent(context, MainActivity::class.java).apply {
-                            user?.let { it1 ->
-                                putExtra("User_Id", it1.userID)
-                                putExtra("role", it1.role)}
-                        }
-                        context.startActivity(intent)
-                    }
-                })
+                loginViewModel.setFullState(login.value.text, password.value.text, context)
+                loginViewModel.checkAuth()
 
                 },
                 modifier = Modifier.align(Alignment.End)) { Text("LOGIN")}
@@ -146,16 +118,12 @@ fun LoginScreen(navController: NavController, loginViewModel: LoginViewModel, mG
 @Composable
 fun RunProgress(loginViewModel: LoginViewModel) {
     val loading = loginViewModel.loading.observeAsState()
-    Log.d("Loading", "Yes")
     loading.value?.let { LoadProgress(it) }
-
 }
-
 
 
 private fun signIn(context: Context, mGoogleSignInClient: GoogleSignInClient, RC_SIGN_IN: Int) {
     val signInIntent: Intent = mGoogleSignInClient.signInIntent
-    Log.d("Before", "Hereer")
     (context as SignUpInActivity).startActivityForResult(signInIntent, RC_SIGN_IN)
 }
 
@@ -165,7 +133,7 @@ private fun signIn(context: Context, mGoogleSignInClient: GoogleSignInClient, RC
 @Composable
 fun LoginScreenPreview() {
     val navController = rememberNavController()
-    val loginViewModel = LoginViewModel(null)
+    val loginViewModel = LoginViewModel(null, null)
 
     LoginScreen(navController, loginViewModel, null, 0)
 }

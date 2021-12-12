@@ -58,7 +58,7 @@ fun DetailFromDeep(requestViewModel: RequestViewModel, id: Int?) {
 }
 
 @Composable
-fun DetailScreen (request: Request, navController: NavController, user: UserDTO){
+fun DetailScreen (request: Request, navController: NavController, role: String){
     val context = LocalContext.current
     val req = toRequestDTO(request)
     Column (
@@ -70,7 +70,7 @@ fun DetailScreen (request: Request, navController: NavController, user: UserDTO)
         CardView(req)
         Spacer(modifier = Modifier.padding(top=10.dp))
         Row {
-            if( user.role == "single_user")
+            if( role == "single_user")
             {
                 Button(onClick = { getShareIntend(context, request.id)},
                     colors = ButtonDefaults.textButtonColors(
@@ -100,7 +100,7 @@ fun DetailScreen (request: Request, navController: NavController, user: UserDTO)
                 Text(text = "Change currency")
             }
         }
-        if( user.role == "moderator" || user.role == "admin")
+        if( role == "moderator" || role == "admin")
         {
             Spacer(modifier = Modifier.padding(top=10.dp))
             Button(onClick =  {
@@ -135,7 +135,7 @@ fun ErrorScreen() {
 fun DetailScreenPreview () {
     val navController = rememberNavController()
     DetailScreen(Request(0, 0,"Hello", 10, 2, "Android", null, null, null),
-        navController, UserDTO(1, "","", "", "moderator"))
+        navController, "moderator")
 }
 
 @Preview(showBackground = true)

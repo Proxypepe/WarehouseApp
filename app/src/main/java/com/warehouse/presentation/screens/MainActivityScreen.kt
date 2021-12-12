@@ -31,7 +31,7 @@ fun StartCardViewList(navController: NavController, requestViewModel: RequestVie
     if (requestViewModel.allRequests != null)
     {
         val list: List<RequestDTO> by requestViewModel.allRequests!!.observeAsState(initial = emptyList())
-        Log.d("Request list", list.toString())
+        Log.d("Request list card view", list.toString())
         CardViewList(list, navController)
     }
 }

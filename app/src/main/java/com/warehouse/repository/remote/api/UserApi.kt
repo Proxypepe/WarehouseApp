@@ -1,8 +1,7 @@
 package com.warehouse.repository.remote.api
 
-import com.warehouse.repository.database.entity.UserDTO
+import com.warehouse.repository.model.UserModel
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.Call
 import retrofit2.http.Path
 
@@ -10,9 +9,9 @@ import retrofit2.http.Path
 
 interface UserApi {
     @GET("./user/all")
-    fun getAllUsers(): Call<List<UserDTO>>
+    fun getAllUsers(): Call<List<UserModel>>
 
-    @GET("./user/{email}")
-    fun getUserByEmail(@Path("email") email: String): Call<UserDTO>
+    @GET("user/{email}")
+    fun getUserByEmail(@Path("email") email: String): Call<UserModel>
 
 }

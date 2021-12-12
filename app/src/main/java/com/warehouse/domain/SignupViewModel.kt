@@ -1,10 +1,15 @@
 package com.warehouse.domain
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.warehouse.presentation.activity.MainActivity
+import com.warehouse.presentation.activity.SignUpInActivity
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.RequestDTO
 import com.warehouse.repository.database.entity.UserDTO
@@ -47,23 +52,23 @@ class SignupViewModel(private val repository: RequestRepository?, private val re
                 if (response.isSuccessful && response.code() == 200 && response.body() != null)
                 {
                     println(response.body())
-                    //start new activity
-
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        response.body()?.let { it1 ->
+                            Toast.makeText(context, "${it1.userID}", LENGTH_LONG).show()
+                            putExtra("userId", it1.userID)
+                            putExtra("role", it1.role)}
+                    }
+                    (context as SignUpInActivity).startActivity(intent)
                 } else {
                     Log.e("Post create user", "${response.code()}")
                 }
-
             }
-
             override fun onFailure(call: Call<UserDTO>, t: Throwable) {
-                TODO("Not yet implemented")
+                Toast.makeText(context, "Check ur Internet connection", LENGTH_LONG).show()
             }
-
-
         })
         Log.d("Create user", "Sent")
     }
-
 }
 
 

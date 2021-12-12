@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.UserDTO
+import com.warehouse.repository.model.UserModel
 import com.warehouse.repository.remote.repository.UserRepository
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -22,8 +23,8 @@ class AdminViewModel(private val repository: RequestRepository, private val user
     }
     
     fun getAllUsers() {
-        userRepository.getAllUsers().enqueue(object : Callback<List<UserDTO>> {
-            override fun onResponse(call: Call<List<UserDTO>>, response: Response<List<UserDTO>>) {
+        userRepository.getAllUsers().enqueue(object : Callback<List<UserModel>> {
+            override fun onResponse(call: Call<List<UserModel>>, response: Response<List<UserModel>>) {
                 if (response.isSuccessful && response.code() == 200 && response.body() != null) {
                     val req = response.body()
                     println(response.toString())
@@ -33,7 +34,7 @@ class AdminViewModel(private val repository: RequestRepository, private val user
                 }
             }
 
-            override fun onFailure(call: Call<List<UserDTO>>, t: Throwable) {
+            override fun onFailure(call: Call<List<UserModel>>, t: Throwable) {
                 Log.e("UserApi", "Failed")
             }
         })

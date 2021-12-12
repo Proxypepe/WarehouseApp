@@ -34,7 +34,9 @@ import java.lang.Thread.sleep
 
 class MainActivity : ComponentActivity() {
     private val requestViewModel: RequestViewModel by viewModels {
-        RequestViewModelFactory((application as RequestsApplication).repository)
+        RequestViewModelFactory((application as RequestsApplication).repository,
+        (application as RequestsApplication).requestsRepository,
+        (application as RequestsApplication).userRepository)
     }
 
     private val adminViewModel: AdminViewModel by viewModels {
@@ -53,16 +55,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val intent = intent
-        val userId = intent.getIntExtra("User_Id", 0)
+        val userId = intent.getIntExtra("userId", 0)
         val role = intent.getStringExtra("role") ?: "single_user"
-        val email = intent.getStringExtra("email")
 
-        if (email == null){
-            requestViewModel.setUserId(userId, role)
-            Log.d("Without email", "Not email log")
-        } else {
-            requestViewModel.initUser(email)
-            Log.d("Email", "Email log")
+        Log.d("User data from intent", "$userId, $role")
+
+        if(!requestViewModel.gotFromRemote) {
+            requestViewModel.getRequestsByUserId(userId)
+            requestViewModel.role = role
         }
         sleep(3000)
     }

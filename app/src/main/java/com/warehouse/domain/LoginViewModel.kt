@@ -6,8 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.warehouse.presentation.activity.MainActivity
+import com.warehouse.presentation.activity.SignUpInActivity
 import com.warehouse.repository.database.RequestRepository
 import com.warehouse.repository.database.entity.UserDTO
+import com.warehouse.repository.model.UserModel
 import com.warehouse.repository.remote.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -58,17 +60,18 @@ class LoginViewModel(private val repository: RequestRepository?, private val rem
     fun checkAuth() {
         if (email != "" && password != "") {
             loading.value = true
-            remoteRepository?.checkAuth(email, password)?.enqueue(object : Callback<UserDTO> {
-                override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
+            remoteRepository?.checkAuth(email, password)?.enqueue(object : Callback<UserModel> {
+                override fun onResponse(call: Call<UserModel>, response: Response<UserModel>) {
                     if (response.isSuccessful && response.code() == 200 && response.body() != null) {
                         val req = response.body()
+                        Log.d("Request", response.body().toString())
                         access.value = true
                         loading.value = false
                         if(context != null) {
                             val intent = Intent(context, MainActivity::class.java).apply {
                                 req?.let { it1 ->
-                                    Log.d("Input User", it1.toString() + "\n" + "${it1.userID}",)
-                                    putExtra("User_Id", it1.userID)
+                                    putExtra("userId", it1.userId)
+                                    putExtra("email", it1.email)
                                     putExtra("role", it1.role)
                                 }
                             }
@@ -82,11 +85,35 @@ class LoginViewModel(private val repository: RequestRepository?, private val rem
                     }
                 }
 
-                override fun onFailure(call: Call<UserDTO>, t: Throwable) {
+                override fun onFailure(call: Call<UserModel>, t: Throwable) {
                     //
                     Log.e("Auth Api", "Failed")
                     access.value = false
                     loading.value = false
+                    var user: UserDTO? = null
+                    var access: Boolean = false
+                    getUserByEmail(email)?.asLiveData()?.observe(context as (SignUpInActivity), {
+                        if (it.email == email && it.password == password)
+                        {
+                            user = it
+                            access = true
+                        } else {
+                            user = null
+                            access = false
+                            Toast.makeText(context, "Uncorrect Email or password", Toast.LENGTH_LONG).show()
+                        }
+                        if (access)
+                        {
+                            val intent = Intent(context, MainActivity::class.java).apply {
+                                user?.let { it1 ->
+                                    Toast.makeText(context, "${it1.userID}", Toast.LENGTH_LONG).show()
+                                    putExtra("userId", it1.userID)
+                                    putExtra("role", it1.role)}
+
+                            }
+                            (context as SignUpInActivity).startActivity(intent)
+                        }
+                    })
                 }
             })
         }
